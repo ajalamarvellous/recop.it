@@ -1,1 +1,5 @@
 venv/
+recop.it/notebooks
+recop.it/scripts/ingest/.ipynb*
+recop.it/scripts/modeling/.ipynb*
+recop.it/scripts/preparation/.ipynb*
