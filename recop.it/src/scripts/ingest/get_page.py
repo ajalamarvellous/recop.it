@@ -30,6 +30,7 @@ def save_page(WEB_PAGE):
 		# Iterating through the data downloaded
 		for page in WEB_PAGE.iter_content(DATA_SIZE):
 			file.write(page.decode())
+		logger.info("%(FILE_NAME) saved successfully")
 	return None
 
 def get_filename():
@@ -41,6 +42,7 @@ def get_filename():
 		final_location = present_location
 	else:
 		final_location = Path(Path.home, DATA_FOLDER)
+		logger.info("Changed file destination to %(final_location)s")
 
 	FILE_NAME = f"{str(final_location)}/webpage.txt"
 	FILE_NAME = verify_filename(FILE_NAME)
@@ -54,12 +56,14 @@ def verify_filename(FILE_NAME):
 	file_exists = os.path.exists(FILE_NAME)
 
 	while file_exists:
+		logger.info("%(FILE_NAME)s exist if folder, renaming.......")
 		basename = os.path.basename().split(".")
 		dir_name = os.path.dirname()
 		FILE_NAME = f"{str(dir_name)}/{basename[0]}{COUNT}.{basename[1]}"
 		COUNT += 1
 		file_exists = os.path.exists(FILE_NAME)
 
+	logger.info("File renamed as %(FILE_NAME)s")
 	return FILE_NAME
 
 def main():
