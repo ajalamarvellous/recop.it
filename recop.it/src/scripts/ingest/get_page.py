@@ -43,4 +43,21 @@ def get_filename():
 		final_location = Path(Path.home, DATA_FOLDER)
 
 	FILE_NAME = f"{str(final_location)}/webpage.txt"
+	FILE_NAME = verify_filename(FILE_NAME)
+	return FILE_NAME
+
+def verify_filename(FILE_NAME):
+	"""This function verifies if there is an existing filename
+		and returns another name if the name exists"""
+	COUNT = 0
+	FILE_NAME = FILE_NAME
+	file_exists = os.path.exists(FILE_NAME)
+
+	while file_exists:
+		basename = os.path.basename().split(".")
+		dir_name = os.path.dirname()
+		FILE_NAME = f"{str(dir_name)}/{basename[0]}{COUNT}.{basename[1]}"
+		COUNT += 1
+		file_exists = os.path.exists(FILE_NAME)
+
 	return FILE_NAME
