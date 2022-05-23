@@ -61,3 +61,10 @@ def verify_filename(FILE_NAME):
 		file_exists = os.path.exists(FILE_NAME)
 
 	return FILE_NAME
+
+def main():
+	WEB_PAGE = get_webpage()
+	save_page(WEB_PAGE)
+
+if __name__ == "__main__":
+	main()
