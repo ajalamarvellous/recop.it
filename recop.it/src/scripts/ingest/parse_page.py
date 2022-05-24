@@ -16,3 +16,13 @@ def get_files():
 	"""Function to get the .txt data files"""
 	files = list(LOCATION.glob("*.txt"))
 	return files
+
+def main():
+	files = get_files()
+	for file in files:
+		with open(file, "r") as doc:
+			soup_doc = BeautifulSoup(doc,"html.parser")
+			
+
+if __name__ == "__main__":
+	main()
