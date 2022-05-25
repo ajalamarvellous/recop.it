@@ -32,13 +32,13 @@ def save_page(WEB_PAGE):
     file = tempfile.TemporaryFile("w+")
     # Iterating through the data downloaded
     for page in WEB_PAGE.iter_content(DATA_SIZE):
-	    file.write(page.decode())
+        file.write(page.decode())
     logger.info(f"{file.name} saved successfully")
     file.seek(0)
     return file
 
 
-#def get_filename():
+# def get_filename():
 #    This function gets the location in which the file will be stored
 #    present_location = os.getcwd()
 #    DATA_FOLDER = "Documents/Programming/recop.it/recop.it/data/raw"
@@ -54,7 +54,7 @@ def save_page(WEB_PAGE):
 #    return FILE_NAME
 
 
-#def verify_filename(FILE_NAME):
+# def verify_filename(FILE_NAME):
 #    This function verifies if there is an existing filename
 #    and returns another name if the name exists
 #    COUNT = 0
