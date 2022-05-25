@@ -1,7 +1,6 @@
 import os
 import logging
 import requests
-import pyperclip
 from pathlib import Path
 import tempfile
 
@@ -30,11 +29,12 @@ def save_page(WEB_PAGE):
     """This function creates a temporary file for the downloaded webpage"""
 
     DATA_SIZE = 5024
-    file = temp.TemporaryFile("w+")
+    file = tempfile.TemporaryFile("w+")
     # Iterating through the data downloaded
     for page in WEB_PAGE.iter_content(DATA_SIZE):
-    	file.write(page.decode())
+	    file.write(page.decode())
     logger.info(f"{file.name} saved successfully")
+    file.seek(0)
     return file
 
 
@@ -75,7 +75,7 @@ def save_page(WEB_PAGE):
 def main():
     WEB_PAGE = get_webpage()
     file = save_page(WEB_PAGE)
-	return file
+    return file
 
 
 if __name__ == "__main__":
