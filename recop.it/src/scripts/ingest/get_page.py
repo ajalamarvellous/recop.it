@@ -3,6 +3,7 @@ import logging
 import requests
 import pyperclip
 from pathlib import Path
+import tempfile
 
 logging.basicConfig(
     format="%(asctime)s [%(levelname)s] \
@@ -12,11 +13,11 @@ logging.basicConfig(
 logger = logging.getLogger()
 
 
-def get_webpage():
+def get_webpage(page_address):
     """Function to download the page from the internet"""
 
     # This function copies the webpage from my clipboard
-    page_address = pyperclip.paste()
+
     try:
         page = requests.get(page_address)
         logger.info(f"{page_address} successfully retrieved")
@@ -26,20 +27,19 @@ def get_webpage():
 
 
 def save_page(WEB_PAGE):
-    """This function creates a document for the downloaded webpage"""
+    """This function creates a temporary file for the downloaded webpage"""
 
     DATA_SIZE = 5024
-    FILE_NAME = get_filename()
-    with open(FILE_NAME, "w") as file:
-        # Iterating through the data downloaded
-        for page in WEB_PAGE.iter_content(DATA_SIZE):
-            file.write(page.decode())
-        logger.info(f"{FILE_NAME} saved successfully")
-    return None
+    file = temp.TemporaryFile("w+")
+    # Iterating through the data downloaded
+    for page in WEB_PAGE.iter_content(DATA_SIZE):
+    	file.write(page.decode())
+    logger.info(f"{file.name} saved successfully")
+    return file
 
-
+"""
 def get_filename():
-    """This function gets the location in which the file will be stored"""
+    This function gets the location in which the file will be stored
     present_location = os.getcwd()
     DATA_FOLDER = "Documents/Programming/recop.it/recop.it/data/raw"
     final_location = None
@@ -55,8 +55,8 @@ def get_filename():
 
 
 def verify_filename(FILE_NAME):
-    """This function verifies if there is an existing filename
-    and returns another name if the name exists"""
+    This function verifies if there is an existing filename
+    and returns another name if the name exists
     COUNT = 0
     FILE_NAME = FILE_NAME
     file_exists = os.path.exists(FILE_NAME)
@@ -71,11 +71,12 @@ def verify_filename(FILE_NAME):
 
     logger.info(f"File renamed as {FILE_NAME}")
     return FILE_NAME
-
+"""
 
 def main():
     WEB_PAGE = get_webpage()
-    save_page(WEB_PAGE)
+    file = save_page(WEB_PAGE)
+	return file
 
 
 if __name__ == "__main__":
