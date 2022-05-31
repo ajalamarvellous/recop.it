@@ -15,9 +15,6 @@ logging.basicConfig(
 )
 logger = logging.getLogger()
 
-# Location to the saved txt files
-LOCATION = Path(Path.home(), "Documents/Programming/recop.it/recop.it/data/raw")
-
 def get_page(web_address):
     """Instantiate selenium browser and get web page
 
@@ -31,7 +28,7 @@ def get_page(web_address):
 
     Return
     ----------
-    browser = object
+    browser : object
               instantiated selenium browser with the loaded web page content
     """
 
@@ -42,9 +39,22 @@ def get_page(web_address):
 
 
 def parse(web_page):
-    """
-    This function parse the file and extract the needed information from the
-    the file
+    """Parse webpage and obtain needed information
+
+    This function parse the file and extract the needed information
+    from the websites
+
+    Parameter(s)
+    ----------------
+    web_page : object
+               instantiated and loaded selenium browser
+
+    Returns
+    ---------
+    data : dictionary {Title: string,
+                       price: string,
+                       product_details: string,
+                       recommendation: list(tuple(title, link))}
     """
     recommendations = []
     main_section = web_page.find_elements(By.XPATH, "//main[@id='chrome-app-container']")[0]
