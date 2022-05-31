@@ -5,9 +5,9 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from pathlib import Path
-from lxml import html
-from get_page import get_webpage, save_page
 
+# Setting log configuration to display time, logger.levelname, function name
+# and log message
 logging.basicConfig(
     format="%(asctime)s [%(levelname)] \
 							%(funcName)s: %(message)s",
@@ -19,7 +19,22 @@ logger = logging.getLogger()
 LOCATION = Path(Path.home(), "Documents/Programming/recop.it/recop.it/data/raw")
 
 def get_page(web_address):
-    """Function to get the .txt data files"""
+    """Instantiate selenium browser and get web page
+
+    This function instantiates the selenium browser and
+    get the contents of the website
+
+    Parameter(s)
+    ------------
+    web_address : string
+                  address of the website to be scraped
+
+    Return
+    ----------
+    browser = object
+              instantiated selenium browser with the loaded web page content
+    """
+
     browser = webdriver.Chrome()
     browser.get(web_address)
     logger.info("Page opened and returning safely")
