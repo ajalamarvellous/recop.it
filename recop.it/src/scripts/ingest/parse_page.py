@@ -9,8 +9,8 @@ from pathlib import Path
 # Setting log configuration to display time, logger.levelname, function name
 # and log message
 logging.basicConfig(
-    format="%(asctime)s [%(levelname)] \
-							%(funcName)s: %(message)s",
+    format="%(asctime)s [%(levelname)s] \
+		    %(funcName)s: %(message)s",
     level=logging.DEBUG,
 )
 logger = logging.getLogger()
@@ -68,21 +68,24 @@ def parse(web_page):
     #recomm_sec = web_page.find_elements(By.XPATH, '//div[@class="YV2UQ"]')
     #loggers.info(f"{len(recomm_sec)} found with the tag")
 
-    recomm_sec = web_page.find_elements(By.XPATH, '//*[@class="YV2UQ"]')
+    recomm_sec = web_page.find_elements(By.CLASS_NAME, "Ha1Ya")
+
+    recc= [a.get_attribute("aria-label") for a in web_page.find_elements(By.XPATH, "//*[@class = 'Usg4d']")]
     #recomm_products = recomm_sec.find_elements(By.TAG_NAME,"li")
     logger.info(f"{'*'*10} {len(recomm_sec)} found {'*'*10}")
-    for product in recomm_sec:
-        product_ = product.find_element_by_tag_name("a")
-        label = product_.get_attribute("aria-label")
-        link = product_.get_attribute("href")
-        recommendations.append((label,link))
-    logger.info(
-        f"Title: {title}\n\
-		Price: {price}\n\
-		Product Details: {product_details}\n\
-		Number of recommendations: {len(recommendations)}\n\
-        first recommendation: {recommendations}"
-    )
+    for products in recomm_sec:
+        for page_div in products.find_elements(By.CLASS_NAME, "YV2UQ"):
+            product_ = page_div.find_element_by_tag_name("a")
+            label = product_.get_attribute("aria-label")
+            link = product_.get_attribute("href")
+            recommendations.append((label,link))
+    logger.info(f"Title: {title} \n\
+		          Price: {price} \n\
+		          Product Details: {product_details} \n\
+		          Number of recommendations: {len(recommendations)} \n\
+                  first recommendation: {recommendations} \n\
+                  recc: {recc}"
+                )
 
 
 def main():
