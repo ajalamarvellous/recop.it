@@ -33,7 +33,6 @@ json_reader = orjson.loads(first_line)
 i = list(json_reader.keys())
 print(i)
 
-
 # This function gets the keys in the original json file
 def get_columns(json_reader):
     # Gets all the keys
@@ -43,7 +42,6 @@ def get_columns(json_reader):
     # Remove the style key since we'll be adding it's contents to the main body
     file_keys.remove("style")
     return file_keys
-
 
 def get_descriptions(prod_dict):
     """
@@ -73,4 +71,42 @@ def get_descriptions(prod_dict):
     if desc_dict != None:
         desc_list.extend(list(desc_dict.keys()))
     return desc_list
-            
+
+
+def get_values(file_keys, prod_dict):
+    """
+    This function gets the values from the keys of the json file present
+
+    The existing json contains the description of the products
+    ["Size:", "Color:", "Packaging:", "Number of Items:"] all inside the style
+    key, this function obtain all these values and make them available all
+    together accesible via .get() method od the product's dictionary
+
+    Argument(s)
+    ---------------
+    file_keys : list
+                contains list of all the keys in the product to be obtained
+
+    prod_dict : dictionary
+                key-value pairs for each dinstint product
+
+    Returns
+    ------------
+    new_prod_dict : dictionary
+                    new key-value pairs of the product including descriptions
+                    which were previously key-value pairs inside style
+
+    """
+    new_prod_dict = dict()
+    STYLE = "style"
+    mini_column = ["Size:", "Color:", "Packaging:", "Number of Items:"]
+    for key in file_keys:
+        if key not in mini_column:
+            new_prod_dict[key] = prod_dict.get(key)
+        elif key in mini_column:
+            value = prod_dict[STYLE].get(key)
+            if value == None:
+                new_prod_dict[key] = "null"
+            else:
+                new_prod_dict[key] = value
+    return new_prod_dict
