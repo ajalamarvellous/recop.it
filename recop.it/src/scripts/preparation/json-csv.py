@@ -43,3 +43,34 @@ def get_columns(json_reader):
     # Remove the style key since we'll be adding it's contents to the main body
     file_keys.remove("style")
     return file_keys
+
+
+def get_descriptions(prod_dict):
+    """
+    This function gets all the description keys in the entire data set
+    that are in the "style" of the main product dictionary
+
+    Depends on the product, the description in the "style" key is different
+    e.g books in the dataset have description format, where as clothing has
+    size, colorand some other descriptions. So this function will obtain all
+    keys that are describing the different properties.
+
+    Argument(s)
+    -----------
+    prod_dict : dict()
+                a dictionary for each person interation containing basic
+                info about them, their rankings and the product they are
+                interacting with
+
+    Return(s)
+    ---------------
+    desc_list : list()
+                a list of all the description keys in the "style" value
+    """
+    desc_list = list()
+    KEY = "style"
+    desc_dict = prod_dict.get(KEY)
+    if desc_dict != None:
+        desc_list.extend(list(desc_dict.keys()))
+    return desc_list
+            
