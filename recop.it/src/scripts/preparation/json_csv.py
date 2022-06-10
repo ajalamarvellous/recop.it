@@ -165,7 +165,7 @@ def get_file_destination(LOCATION):
 def create_file(file_destination, n_files):
     """This function creates a new file where the csv file will be saved"""
     filename = file_destination + "FILE_" + str(n_files) + ".csv"
-    file = open(filename, "w")
+    file = open(filename, "w", newline="")
     n_files += 1
     return file, n_files
 
