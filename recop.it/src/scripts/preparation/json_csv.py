@@ -157,6 +157,13 @@ def get_file_destination(LOCATION):
     return "/".join(destination_list[:-2]) + str("/processed/")
 
 
+def create_file(file_destination, n_files):
+    """This function creates a new file where the csv file will be saved"""
+    filename = file_destination + "FILE_" + str(n_files) + ".csv"
+    file = open(filename, "w")
+    n_files += 1
+    return file, n_files
+
 # +
 def main():
     n_rows = 1
