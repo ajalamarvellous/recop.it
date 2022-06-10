@@ -35,24 +35,24 @@ def get_columns(json_line, descriptions):
     """
     This function gets the keys (to be used as columns) and the description
     keys and combines all of them together as the columns to be used
-
+    
     Parameter(s)
     --------------
     json_line : dict()
                 a complete data point already parsed as a dictionary by
                 orjson.loads()
-
+                
     descriptions : list()
-                   a list of all keys in the dataset found in the "style" key
+                   a list of all keys in the dataset found in the "style" key 
                    of each data point
-
+                   
     Return(s)
     -----------
     column_keys : list()
                   a list of all the keys in the dataset and the keys originally
                   in the 'style' key minus the "style key"
     """
-
+    
     column_keys = list(json_line.keys())
     file_keys.extend(descriptions)
     file_keys.remove("style")
@@ -61,7 +61,7 @@ def get_columns(json_line, descriptions):
 def get_descriptions(prod_dict):
     """
     This function gets the description keys in each data entry i.e each line
-    representing the data for interaction of a user with a product that are
+    representing the data for interaction of a user with a product that are 
     in the "style" of that data enty dictionary
 
     Depends on the product, the description in the "style" key is different
@@ -164,6 +164,20 @@ def create_file(file_destination, n_files):
     n_files += 1
     return file, n_files
 
+
+def PRODUCT_DESC_PRESENT(line_dict):
+    """
+    This function evaluates if product description (key 'style')
+    exists and return bool yes or no
+    """
+    STYLE = 'style'
+    desc = line_dict.get(STYLE)
+    if desc == None:
+        return False
+    else:
+        return True
+
+
 # +
 def main():
     n_rows = 1
@@ -177,7 +191,7 @@ def main():
             line_dict = read_json(line)
             if n_rows == 1:
                 columns = get_columns(line_dict, all_desc)
-                csv_writer = csv.DictWriter(processed_file,
+                csv_writer = csv.DictWriter(processed_file, 
                                             fieldnames=columns)
             else:
                 pass
@@ -196,6 +210,8 @@ def main():
             else:
                 pass
         processed_file.close()
-
-
+        
+                
 # -
+
+
