@@ -20,26 +20,39 @@
 import os
 import orjson
 
-#Location to the json
-location = "../../data/raw/Clothing_Shoes_and_Jewelry_5.json"
-
-#loading file
-json_file = open(location, "rb")
-
-first_line = json_file.readline()
-json_reader = orjson.loads(first_line)
+#Location to the json file
+LOCATION = "../../data/raw/Clothing_Shoes_and_Jewelry_5.json"
 
 
-i = list(json_reader.keys())
-print(i)
+def read_json(line):
+    """This function reads a line of the json file as a dictionary"""
+    return orjson.loads(line)
 
-# This function gets the keys in the original json file
-def get_columns(json_reader):
-    # Gets all the keys
-    file_keys = list(json_reader.keys())
-    # Add the keys found in the style value which is contains another dictionary
-    file_keys.extend(["Size:", "Color:", "Packaging:", "Number of Items:"])
-    # Remove the style key since we'll be adding it's contents to the main body
+
+def get_columns(json_line, descriptions):
+    """
+    This function gets the keys (to be used as columns) and the description
+    keys and combines all of them together as the columns to be used
+
+    Parameter(s)
+    --------------
+    json_line : dict()
+                a complete data point already parsed as a dictionary by
+                orjson.loads()
+
+    descriptions : list()
+                   a list of all keys in the dataset found in the "style" key
+                   of each data point
+
+    Return(s)
+    -----------
+    column_keys : list()
+                  a list of all the keys in the dataset and the keys originally
+                  in the 'style' key minus the "style key"
+    """
+
+    column_keys = list(json_line.keys())
+    file_keys.extend(descriptions)
     file_keys.remove("style")
     return file_keys
 
