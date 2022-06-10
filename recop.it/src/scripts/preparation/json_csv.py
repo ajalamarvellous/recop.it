@@ -125,3 +125,21 @@ def get_values(file_keys, prod_dict):
             else:
                 new_prod_dict[key] = value
     return new_prod_dict
+
+
+def get_all_desc(LOCATION):
+    """
+    This function combines all the descriptions of each data entry to obtain
+    all unique desciptions in the 'style' key
+    """
+    file = open(LOCATION, "rb")
+    desc = list()
+    for line in tqdm(file, desc="Reading each line of json file"):
+        json_dict = read_json(line)
+        line_desc = get_descriptions(json_dict)
+        desc.extend(line_desc)
+    return list(set(desc))
+
+#all_desc = get_all_desc(LOCATION)
+
+all_desc
