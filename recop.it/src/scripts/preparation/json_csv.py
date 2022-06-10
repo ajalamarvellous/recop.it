@@ -34,24 +34,24 @@ def get_columns(json_line, descriptions):
     """
     This function gets the keys (to be used as columns) and the description
     keys and combines all of them together as the columns to be used
-
+    
     Parameter(s)
     --------------
     json_line : dict()
                 a complete data point already parsed as a dictionary by
                 orjson.loads()
-
+                
     descriptions : list()
-                   a list of all keys in the dataset found in the "style" key
+                   a list of all keys in the dataset found in the "style" key 
                    of each data point
-
+                   
     Return(s)
     -----------
     column_keys : list()
                   a list of all the keys in the dataset and the keys originally
                   in the 'style' key minus the "style key"
     """
-
+    
     column_keys = list(json_line.keys())
     file_keys.extend(descriptions)
     file_keys.remove("style")
@@ -60,7 +60,7 @@ def get_columns(json_line, descriptions):
 def get_descriptions(prod_dict):
     """
     This function gets the description keys in each data entry i.e each line
-    representing the data for interaction of a user with a product that are
+    representing the data for interaction of a user with a product that are 
     in the "style" of that data enty dictionary
 
     Depends on the product, the description in the "style" key is different
@@ -140,6 +140,43 @@ def get_all_desc(LOCATION):
         desc.extend(line_desc)
     return list(set(desc))
 
+
+# +
 #all_desc = get_all_desc(LOCATION)
+# -
 
 all_desc
+
+
+# +
+def main():
+    n_rows = 1
+    n_files = 0
+    columns = list()
+    with open(LOCATION, "rb") as file:
+        file_destinations = get_file_destination(LOCATION)
+        processed_file = create_file(file_destination, n_files)
+        for line in file:
+            line_dict = read_json(line)
+            if n_rows == 1:
+                columns = get_columns(line_dict, all_desc)
+            else:
+                pass
+            if PRODUCT_DESC_PRESENT(line_dict):
+                n_rows += 1
+                values = get_values(columns, line_dict)
+
+                if NEW_FILE_BREAK(n_rows):
+                    processed_file.close()
+                    processed_file = create_file(file_destination, n_files)
+                else:
+                    pass
+                write_line(processed_file, values)
+            else:
+                pass
+        processed_file.close()
+        
+                
+# -
+
+
