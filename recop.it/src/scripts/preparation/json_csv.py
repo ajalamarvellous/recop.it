@@ -178,7 +178,17 @@ def PRODUCT_DESC_PRESENT(line_dict):
         return True
 
 
-# +
+def NEW_FILE_BREAK(n_rows):
+    """
+    This function evaluates if we have 500,000 entries in the existing file
+    """
+    expected_break = 500000
+    if n_row % expected_break == 0:
+        return True
+    else:
+        return False
+
+
 def main():
     n_rows = 1
     n_files = 1
@@ -209,9 +219,4 @@ def main():
                 write_line(processed_file, values)
             else:
                 pass
-        processed_file.close()
-        
-                
-# -
-
-
+        processed_file.close()                
