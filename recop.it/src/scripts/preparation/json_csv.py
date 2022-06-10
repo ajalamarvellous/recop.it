@@ -194,6 +194,13 @@ def NEW_FILE_BREAK(n_rows):
         return False
 
 
+def write_line(csv_writer, values):
+    """
+    This function writes a new line into the csv file containing all our data
+    """
+    return csv_writer.writerow(values)
+
+
 def main():
     n_rows = 1
     n_files = 1
@@ -209,6 +216,7 @@ def main():
                 columns = get_columns(line_dict, all_prod_desc)
                 csv_writer = csv.DictWriter(processed_file, 
                                             fieldnames=columns)
+                csv_writer.writeheader()
             else:
                 pass
             if PRODUCT_DESC_PRESENT(line_dict):
@@ -220,6 +228,7 @@ def main():
                                                 file_destination, n_files)
                     csv_writer = csv.DictWriter(processed_file,
                                                 fieldnames=columns)
+                    csv_writer.writeheader()
                 else:
                     pass
                 write_line(processed_file, values)
