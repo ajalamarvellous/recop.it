@@ -89,7 +89,7 @@ def get_descriptions(prod_dict):
     return desc_list
 
 
-def get_values(file_keys, prod_dict):
+def get_values(prod_dict, columns, all_prod_desc):
     """
     This function gets the values from the keys of the json file present
 
@@ -100,11 +100,17 @@ def get_values(file_keys, prod_dict):
 
     Argument(s)
     ---------------
-    file_keys : list
-                contains list of all the keys in the product to be obtained
-
     prod_dict : dictionary
                 key-value pairs for each dinstint product
+                
+    columns : list
+              contains list of all the columns (keys in the data entry) to 
+              be obtained
+
+                
+    all_prod_desc : list
+               contains list of all products meta_data in the 'style' key
+               that describes that individual products
 
     Returns
     ------------
@@ -115,11 +121,10 @@ def get_values(file_keys, prod_dict):
     """
     new_prod_dict = dict()
     STYLE = "style"
-    mini_column = ["Size:", "Color:", "Packaging:", "Number of Items:"]
-    for key in file_keys:
-        if key not in mini_column:
+    for key in columns:
+        if key not in all_prod_desc:
             new_prod_dict[key] = prod_dict.get(key)
-        elif key in mini_column:
+        elif key in all_prod_desc:
             value = prod_dict[STYLE].get(key)
             if value == None:
                 new_prod_dict[key] = "null"
@@ -135,7 +140,7 @@ def get_all_desc(LOCATION):
     """
     file = open(LOCATION, "rb")
     desc = list()
-    for line in tqdm(file, desc="Reading each line of json file"):
+    for line in tqdm(file, desc="Getting all the descriptions"):
         json_dict = read_json(line)
         line_desc = get_descriptions(json_dict)
         desc.extend(line_desc)
@@ -193,6 +198,7 @@ def main():
     n_rows = 1
     n_files = 1
     columns = list()
+    all_prod_desc = get_all_desc(LOCATION)
     with open(LOCATION, "rb") as file:
         file_destination = get_file_destination(LOCATION)
         processed_file, n_files = create_file(file_destination, n_files)
@@ -200,14 +206,14 @@ def main():
         for line in file:
             line_dict = read_json(line)
             if n_rows == 1:
-                columns = get_columns(line_dict, all_desc)
+                columns = get_columns(line_dict, all_prod_desc)
                 csv_writer = csv.DictWriter(processed_file, 
                                             fieldnames=columns)
             else:
                 pass
             if PRODUCT_DESC_PRESENT(line_dict):
                 n_rows += 1
-                values = get_values(columns, line_dict)
+                values = get_values(columns, line_dict, all_prod_desc)
                 if NEW_FILE_BREAK(n_rows):
                     processed_file.close()
                     processed_file, n_files = create_file(
