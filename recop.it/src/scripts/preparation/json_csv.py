@@ -19,6 +19,7 @@
 
 import os
 import orjson
+from tqdm import tqdm
 
 #Location to the json file
 LOCATION = "../../data/raw/Clothing_Shoes_and_Jewelry_5.json"
@@ -33,24 +34,24 @@ def get_columns(json_line, descriptions):
     """
     This function gets the keys (to be used as columns) and the description
     keys and combines all of them together as the columns to be used
-    
+
     Parameter(s)
     --------------
     json_line : dict()
                 a complete data point already parsed as a dictionary by
                 orjson.loads()
-                
+
     descriptions : list()
-                   a list of all keys in the dataset found in the "style" key 
+                   a list of all keys in the dataset found in the "style" key
                    of each data point
-                   
+
     Return(s)
     -----------
     column_keys : list()
                   a list of all the keys in the dataset and the keys originally
                   in the 'style' key minus the "style key"
     """
-    
+
     column_keys = list(json_line.keys())
     file_keys.extend(descriptions)
     file_keys.remove("style")
@@ -58,13 +59,14 @@ def get_columns(json_line, descriptions):
 
 def get_descriptions(prod_dict):
     """
-    This function gets all the description keys in the entire data set
-    that are in the "style" of the main product dictionary
+    This function gets the description keys in each data entry i.e each line
+    representing the data for interaction of a user with a product that are
+    in the "style" of that data enty dictionary
 
     Depends on the product, the description in the "style" key is different
     e.g books in the dataset have description format, where as clothing has
-    size, colorand some other descriptions. So this function will obtain all
-    keys that are describing the different properties.
+    size, color and some other descriptions. So this function will obtain all
+    keys that are describing the different properties of that data entry.
 
     Argument(s)
     -----------
@@ -123,12 +125,3 @@ def get_values(file_keys, prod_dict):
             else:
                 new_prod_dict[key] = value
     return new_prod_dict
-
-
-["Size:", "Color:", "Packaging:", "Number of Items:"]
-
-# +
-
-#loading file
-json_file = open(location, "rb")first_line = json_file.readline()
-json_reader = orjson.loads(first_line)
