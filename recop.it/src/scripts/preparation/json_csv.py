@@ -123,13 +123,13 @@ def get_values(prod_dict, columns, all_prod_desc):
     STYLE = "style"
     for key in columns:
         if key not in all_prod_desc:
-            new_prod_dict[key] = prod_dict.get(key)
+            new_prod_dict[key] = prod_dict.get(key).strip()
         elif key in all_prod_desc:
             value = prod_dict[STYLE].get(key)
             if value == None:
                 new_prod_dict[key] = "null"
             else:
-                new_prod_dict[key] = value
+                new_prod_dict[key] = value.strip()
     return new_prod_dict
 
 
