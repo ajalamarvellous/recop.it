@@ -17,7 +17,10 @@ def test_read_json():
         assert isinstance(y, dict) is True
 
 def test_get_columns():
-    pass
+    columns = get_columns(mock_content, DESC)
+    assert len(columns) == 9
+    assert "style" not in columns
+    assert isinstance(columns, list)
 
 def test_get_descriptions():
     pass
