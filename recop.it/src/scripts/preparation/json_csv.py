@@ -17,12 +17,11 @@
 # Loading necessary libraries
 # -
 
-import os
 import orjson
 from tqdm import tqdm
 import csv
 
-#Location to the json file
+# Location to the json file
 LOCATION = "../../data/raw/Clothing_Shoes_and_Jewelry_5.json"
 
 
@@ -35,33 +34,32 @@ def get_columns(json_line, descriptions):
     """
     This function gets the keys (to be used as columns) and the description
     keys and combines all of them together as the columns to be used
-    
+    ---------------
     Parameter(s)
     --------------
     json_line : dict()
                 a complete data point already parsed as a dictionary by
                 orjson.loads()
-                
     descriptions : list()
-                   a list of all keys in the dataset found in the "style" key 
+                   a list of all keys in the dataset found in the "style" key
                    of each data point
-                   
+    ------------
     Return(s)
     -----------
     column_keys : list()
                   a list of all the keys in the dataset and the keys originally
                   in the 'style' key minus the "style key"
     """
-    
     column_keys = list(json_line.keys())
-    file_keys.extend(descriptions)
-    file_keys.remove("style")
-    return file_keys
+    column_keys.extend(descriptions)
+    column_keys.remove("style")
+    return column_keys
+
 
 def get_descriptions(prod_dict):
     """
     This function gets the description keys in each data entry i.e each line
-    representing the data for interaction of a user with a product that are 
+    representing the data for interaction of a user with a product that are
     in the "style" of that data enty dictionary
 
     Depends on the product, the description in the "style" key is different
@@ -84,7 +82,7 @@ def get_descriptions(prod_dict):
     desc_list = list()
     KEY = "style"
     desc_dict = prod_dict.get(KEY)
-    if desc_dict != None:
+    if desc_dict is not None:
         desc_list.extend(list(desc_dict.keys()))
     return desc_list
 
@@ -102,12 +100,12 @@ def get_values(prod_dict, columns, all_prod_desc):
     ---------------
     prod_dict : dictionary
                 key-value pairs for each dinstint product
-                
+
     columns : list
-              contains list of all the columns (keys in the data entry) to 
+              contains list of all the columns (keys in the data entry) to
               be obtained
 
-                
+
     all_prod_desc : list
                contains list of all products meta_data in the 'style' key
                that describes that individual products
@@ -126,7 +124,7 @@ def get_values(prod_dict, columns, all_prod_desc):
             new_prod_dict[key] = prod_dict.get(key).strip()
         elif key in all_prod_desc:
             value = prod_dict[STYLE].get(key)
-            if value == None:
+            if value is None:
                 new_prod_dict[key] = "null"
             else:
                 new_prod_dict[key] = value.strip()
@@ -148,10 +146,8 @@ def get_all_desc(LOCATION):
 
 
 # +
-#all_desc = get_all_desc(LOCATION)
+# all_desc = get_all_desc(LOCATION)
 # -
-
-all_desc
 
 
 def get_file_destination(LOCATION):
@@ -177,7 +173,7 @@ def PRODUCT_DESC_PRESENT(line_dict):
     """
     STYLE = 'style'
     desc = line_dict.get(STYLE)
-    if desc == None:
+    if desc is None:
         return False
     else:
         return True
@@ -188,7 +184,7 @@ def NEW_FILE_BREAK(n_rows):
     This function evaluates if we have 500,000 entries in the existing file
     """
     expected_break = 500000
-    if n_row % expected_break == 0:
+    if n_rows % expected_break == 0:
         return True
     else:
         return False
@@ -214,7 +210,7 @@ def main():
             line_dict = read_json(line)
             if n_rows == 1:
                 columns = get_columns(line_dict, all_prod_desc)
-                csv_writer = csv.DictWriter(processed_file, 
+                csv_writer = csv.DictWriter(processed_file,
                                             fieldnames=columns)
                 csv_writer.writeheader()
             else:
@@ -234,4 +230,4 @@ def main():
                 write_line(processed_file, values)
             else:
                 pass
-        processed_file.close()                
+        processed_file.close()
