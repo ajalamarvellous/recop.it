@@ -8,26 +8,31 @@ from json_csv import *
 
 LOCATION = "../../data/raw/Clothing_Shoes_and_Jewelry_5.json"
 DESC = ["h", "i", "j"]
-mock_content = {"a": 5.0, "b": "2", "c": "true", "d": "05 4, 2014",
-                "e": "A2IC3NZN488KWK", "style": {"f:": "Paperback"},
-                "g": "Ruby Tulip" }
+
+@pytest.fixture
+def create_mock_dict():
+    """This function create a mock dictionary"""
+    return {"a": 5.0, "b": "2", "c": "true", "d": "05 4, 2014",
+            "e": "A2IC3NZN488KWK", "style": {"f:": "Paperback"},
+            "g": "Ruby Tulip" }
+
 def test_read_json():
     with open(LOCATION, "rb") as f:
         y = read_json(f.readline())
         assert isinstance(y, dict) is True
 
-def test_get_columns():
-    columns = get_columns(mock_content, DESC)
+def test_get_columns(create_mock_dict):
+    columns = get_columns(create_mock_dict, DESC)
     assert len(columns) == 9
     assert "style" not in columns
     assert isinstance(columns, list)
 
-def test_get_desc_keys():
-    x = get_desc_keys(mock_content)
+def test_get_desc_keys(create_mock_dict):
+    x = get_desc_keys(create_mock_dict)
     assert isinstance(x, list)
     assert len(x) == 1
     assert x[0] == "f:"
-    y = mock_content
+    y = create_mock_dict
     del y["style"]
     assert get_desc_keys(y) is None
 
