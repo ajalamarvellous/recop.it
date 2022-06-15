@@ -56,7 +56,7 @@ def get_columns(json_line, descriptions):
     return column_keys
 
 
-def get_descriptions(prod_dict):
+def get_desc_keys(prod_dict):
     """
     This function gets the description keys in each data entry i.e each line
     representing the data for interaction of a user with a product that are
@@ -79,12 +79,12 @@ def get_descriptions(prod_dict):
     desc_list : list()
                 a list of all the description keys in the "style" value
     """
-    desc_list = list()
     KEY = "style"
     desc_dict = prod_dict.get(KEY)
     if desc_dict is not None:
-        desc_list.extend(list(desc_dict.keys()))
-    return desc_list
+        return list(desc_dict.keys())
+    else:
+        return None
 
 
 def get_values(prod_dict, columns, all_prod_desc):
@@ -140,7 +140,7 @@ def get_all_desc(LOCATION):
     desc = list()
     for line in tqdm(file, desc="Getting all the descriptions"):
         json_dict = read_json(line)
-        line_desc = get_descriptions(json_dict)
+        line_desc = get_desc_keys(json_dict)
         desc.extend(line_desc)
     return list(set(desc))
 
