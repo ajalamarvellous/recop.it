@@ -9,7 +9,7 @@ from json_csv import *
 LOCATION = "../../data/raw/Clothing_Shoes_and_Jewelry_5.json"
 DESC = ["h", "i", "j"]
 mock_content = {"a": 5.0, "b": "2", "c": "true", "d": "05 4, 2014",
-                "e": "A2IC3NZN488KWK", "style": {"f:": " Paperback"},
+                "e": "A2IC3NZN488KWK", "style": {"f:": "Paperback"},
                 "g": "Ruby Tulip" }
 def test_read_json():
     with open(LOCATION, "rb") as f:
@@ -22,8 +22,36 @@ def test_get_columns():
     assert "style" not in columns
     assert isinstance(columns, list)
 
-def test_get_descriptions():
-    pass
+def test_get_desc_keys():
+    x = get_desc_keys(mock_content)
+    assert isinstance(x, list)
+    assert len(x) == 1
+    assert x[0] == "f:"
+    y = mock_content
+    del y["style"]
+    assert get_desc_keys(y) is None
+
 
 def test_get_values():
+    pass
+
+def test_get_all_desc():
+    pass
+
+def test_get_file_destination():
+    pass
+
+def test_create_file():
+    pass
+
+def test_product_desc_present():
+    pass
+
+def test_new_file_break():
+    pass
+
+def test_write_line():
+    pass
+
+def test_main():
     pass
