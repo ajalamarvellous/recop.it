@@ -1,8 +1,8 @@
 venv/
+mlruns
+recop.it/data
 recop.it/src/notebooks
 recop.it/src/scripts/ingest/.ipynb*
 recop.it/src/scripts/modeling/.ipynb*
 recop.it/src/scripts/preparation/.ipynb*
-recop.it/data
-mlruns
-recop.it/src/scripts/ingest/__pycache__/
+recop.it/src/scripts/*/__pycache__
