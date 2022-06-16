@@ -1,4 +1,5 @@
 import sys
+import os
 import pytest
 from unittest.mock import *
 
@@ -7,7 +8,9 @@ sys.path.insert(0,"/home/ajala/Documents/Programming/recop.it/recop.it/src/scrip
 
 from json_csv import *
 
-LOCATION = "../../data/raw/Clothing_Shoes_and_Jewelry_5.json"
+@pytest.fixture
+def LOCATION():
+    return "../../data/raw/Clothing_Shoes_and_Jewelry_5.json"
 
 @pytest.fixture
 def create_mock_dict():
@@ -16,7 +19,7 @@ def create_mock_dict():
             "e": "A2IC3NZN488KWK", "style": {"f:": "Paperback"},
             "g": "Ruby Tulip" }
 
-def test_read_json():
+def test_read_json(LOCATION):
     with open(LOCATION, "rb") as f:
         y = read_json(f.readline())
         assert isinstance(y, dict) is True
@@ -48,14 +51,18 @@ def test_get_values(create_mock_dict):
     assert values["z"] == "null"
     assert list(values.values()) == expected_values
 
-pytest.mark.skip(reason="Tested already and takes too long to load")
-def test_get_all_desc():
+@pytest.mark.skip(reason="Tested already and takes too long to load")
+def test_get_all_desc(LOCATION):
     desc_keys = get_all_desc_keys(LOCATION)
     assert isinstance(desc_keys, list)
     assert len(desc_keys) != 0
 
-def test_get_file_destination():
-    pass
+def test_get_file_destination(LOCATION):
+    loc = get_file_destination(LOCATION)
+    assert os.path.exists(loc)
+    assert loc.endswith(r"/processed/")
+    assert "data" in loc.split(r"/")
+    assert "raw" not in loc.split(r"/")
 
 def test_create_file():
     pass
