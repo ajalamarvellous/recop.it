@@ -64,10 +64,16 @@ def test_get_file_destination(LOCATION):
     assert "data" in loc.split(r"/")
     assert "raw" not in loc.split(r"/")
 
-def test_create_file():
-    pass
+def test_create_file(LOCATION):
+    file, n_files = create_file(LOCATION, 0)
+    assert n_files == 1
+    assert file.mode == "w"
+    assert file.name.endswith("FILE_0.csv")
+    assert file.closed is False
+    os.remove(file.name)
 
-def test_product_desc_present():
+
+def test_product_desc_present(create_mock_dict):
     pass
 
 def test_new_file_break():
