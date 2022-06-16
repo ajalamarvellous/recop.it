@@ -1,6 +1,8 @@
 import sys
 import os
 import pytest
+import tempfile
+import csv
 from unittest.mock import *
 
 # Adding preparation directiory to sys path
@@ -21,15 +23,12 @@ def create_mock_dict():
             "g": "Ruby Tulip" }
 
 
-@pytest.mark.parametrize("input, expected", [
-                        (500000, True),
-                        (500001, False),
-                        (2519235, False),
-                        (11000000, True),
-                        (1500000, True)
-                        ])
+@pytest.fixture
+def mock_csv_writer():
+    file = tempfile.TemporaryFile("w+")
+    return file
 
-                        
+
 def test_read_json(LOCATION):
     with open(LOCATION, "rb") as f:
         y = read_json(f.readline())
@@ -94,11 +93,34 @@ def test_product_desc_present(create_mock_dict):
     assert PRODUCT_DESC_PRESENT(create_mock_dict) is False
 
 
+@pytest.mark.parametrize("input, expected", [
+                        (500000, True),
+                        (500001, False),
+                        (2519235, False),
+                        (11000000, True),
+                        (1500000, True)
+                        ])
+
+
 def test_new_file_break(input, expected):
     assert NEW_FILE_BREAK(input) is expected
 
-def test_write_line():
-    pass
+
+def test_write_line(mock_csv_writer, create_mock_dict):
+    file = mock_csv_writer
+    del create_mock_dict["style"]
+    file_writer = csv.DictWriter(file,
+                                fieldnames = ["a", "b", "c", "d", "e", "g"])
+    file_writer.writeheader()
+    write_line(file_writer, create_mock_dict)
+    file.seek(0)
+    file_reader = csv.reader(file)
+    for line in file_reader:
+        new_line = line
+    answer = ["5.0", "2", "true", "05 4, 2014",
+             "A2IC3NZN488KWK", "Ruby Tulip"]
+    assert new_line == answer
+
 
 def test_main():
     pass
