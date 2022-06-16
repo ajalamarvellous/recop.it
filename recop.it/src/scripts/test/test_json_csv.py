@@ -12,6 +12,7 @@ from json_csv import *
 def LOCATION():
     return "../../data/raw/Clothing_Shoes_and_Jewelry_5.json"
 
+
 @pytest.fixture
 def create_mock_dict():
     """This function create a mock dictionary"""
@@ -19,6 +20,16 @@ def create_mock_dict():
             "e": "A2IC3NZN488KWK", "style": {"f:": "Paperback"},
             "g": "Ruby Tulip" }
 
+
+@pytest.mark.parametrize("input, expected", [
+                        (500000, True),
+                        (500001, False),
+                        (2519235, False),
+                        (11000000, True),
+                        (1500000, True)
+                        ])
+
+                        
 def test_read_json(LOCATION):
     with open(LOCATION, "rb") as f:
         y = read_json(f.readline())
@@ -30,6 +41,7 @@ def test_get_columns(create_mock_dict):
     assert len(columns) == 9
     assert "style" not in columns
     assert isinstance(columns, list)
+
 
 def test_get_desc_keys(create_mock_dict):
     x = get_desc_keys(create_mock_dict)
@@ -51,11 +63,13 @@ def test_get_values(create_mock_dict):
     assert values["z"] == "null"
     assert list(values.values()) == expected_values
 
+
 @pytest.mark.skip(reason="Tested already and takes too long to load")
 def test_get_all_desc(LOCATION):
     desc_keys = get_all_desc_keys(LOCATION)
     assert isinstance(desc_keys, list)
     assert len(desc_keys) != 0
+
 
 def test_get_file_destination(LOCATION):
     loc = get_file_destination(LOCATION)
@@ -63,6 +77,7 @@ def test_get_file_destination(LOCATION):
     assert loc.endswith(r"/processed/")
     assert "data" in loc.split(r"/")
     assert "raw" not in loc.split(r"/")
+
 
 def test_create_file(LOCATION):
     file, n_files = create_file(LOCATION, 0)
@@ -78,8 +93,9 @@ def test_product_desc_present(create_mock_dict):
     del create_mock_dict["style"]
     assert PRODUCT_DESC_PRESENT(create_mock_dict) is False
 
-def test_new_file_break():
-    pass
+
+def test_new_file_break(input, expected):
+    assert NEW_FILE_BREAK(input) is expected
 
 def test_write_line():
     pass
