@@ -74,7 +74,9 @@ def test_create_file(LOCATION):
 
 
 def test_product_desc_present(create_mock_dict):
-    pass
+    assert PRODUCT_DESC_PRESENT(create_mock_dict) is True
+    del create_mock_dict["style"]
+    assert PRODUCT_DESC_PRESENT(create_mock_dict) is False
 
 def test_new_file_break():
     pass
