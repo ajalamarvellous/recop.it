@@ -121,7 +121,10 @@ def get_values(prod_dict, columns, all_prod_desc):
     STYLE = "style"
     for key in columns:
         if key not in all_prod_desc:
-            new_prod_dict[key] = prod_dict.get(key).strip()
+            if type(prod_dict.get(key)) is int or type(prod_dict.get(key)) is float:
+                new_prod_dict[key] = prod_dict.get(key)
+            else:
+                new_prod_dict[key] = prod_dict.get(key).strip()
         elif key in all_prod_desc:
             value = prod_dict[STYLE].get(key)
             if value is None:
