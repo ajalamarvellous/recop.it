@@ -48,8 +48,11 @@ def test_get_values(create_mock_dict):
     assert values["z"] == "null"
     assert list(values.values()) == expected_values
 
+pytest.mark.skip(reason="Tested already and takes too long to load")
 def test_get_all_desc():
-    pass
+    desc_keys = get_all_desc_keys(LOCATION)
+    assert isinstance(desc_keys, list)
+    assert len(desc_keys) != 0
 
 def test_get_file_destination():
     pass
