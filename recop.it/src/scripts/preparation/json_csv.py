@@ -20,11 +20,12 @@
 import orjson
 from tqdm import tqdm
 import csv
+from prefect import task, Flow
 
 # Location to the json file
 LOCATION = "../../data/raw/Clothing_Shoes_and_Jewelry_5.json"
 
-
+@task
 def read_json(line):
     """This function reads a line of the json file as a dictionary"""
     return orjson.loads(line)
@@ -86,7 +87,7 @@ def get_desc_keys(prod_dict):
     else:
         return None
 
-
+@task
 def get_values(prod_dict, columns, all_prod_desc):
     """
     This function gets the values from the keys of the json file present
@@ -133,7 +134,7 @@ def get_values(prod_dict, columns, all_prod_desc):
                 new_prod_dict[key] = value.strip()
     return new_prod_dict
 
-
+@task
 def get_all_desc_keys(LOCATION):
     """
     This function combines all the descriptions of each data entry to obtain
@@ -157,7 +158,7 @@ def get_all_desc_keys(LOCATION):
 # all_desc = get_all_desc(LOCATION)
 # -
 
-
+@task
 def get_file_destination(LOCATION):
     """
     This function sets the destination to save the files to as 'data/processed'
@@ -165,7 +166,7 @@ def get_file_destination(LOCATION):
     destination_list = LOCATION.split("/")
     return "/".join(destination_list[:-2]) + str("/processed/")
 
-
+@task
 def create_file(file_destination, n_files):
     """This function creates a new file where the csv file will be saved"""
     filename = file_destination + "FILE_" + str(n_files) + ".csv"
@@ -206,36 +207,42 @@ def write_line(csv_writer, values):
 
 
 def main():
-    n_rows = 1
-    n_files = 1
-    columns = list()
-    all_prod_desc = get_all_desc_keys(LOCATION)
-    with open(LOCATION, "rb") as file:
-        file_destination = get_file_destination(LOCATION)
-        processed_file, n_files = create_file(file_destination, n_files)
-        csv_writer = None
-        for line in file:
-            line_dict = read_json(line)
-            if n_rows == 1:
-                columns = get_columns(line_dict, all_prod_desc)
-                csv_writer = csv.DictWriter(processed_file,
-                                            fieldnames=columns)
-                csv_writer.writeheader()
-            else:
-                pass
-            if PRODUCT_DESC_PRESENT(line_dict):
-                n_rows += 1
-                values = get_values(columns, line_dict, all_prod_desc)
-                if NEW_FILE_BREAK(n_rows):
-                    processed_file.close()
-                    processed_file, n_files = create_file(
-                                                file_destination, n_files)
+    with Flow(name="json_to_csv_etl") as flow:
+        n_rows = 1
+        n_files = 1
+        columns = list()
+        all_prod_desc = get_all_desc_keys(LOCATION)
+        with open(LOCATION, "rb") as file:
+            file_destination = get_file_destination(LOCATION)
+            processed_file, n_files = create_file(file_destination, n_files)
+            csv_writer = None
+            for line in file:
+                line_dict = read_json(line)
+                if n_rows == 1:
+                    columns = get_columns(line_dict, all_prod_desc)
                     csv_writer = csv.DictWriter(processed_file,
                                                 fieldnames=columns)
                     csv_writer.writeheader()
                 else:
                     pass
-                write_line(processed_file, values)
-            else:
-                pass
-        processed_file.close()
+                if PRODUCT_DESC_PRESENT(line_dict):
+                    n_rows += 1
+                    values = get_values(columns, line_dict, all_prod_desc)
+                    if NEW_FILE_BREAK(n_rows):
+                        processed_file.close()
+                        processed_file, n_files = create_file(
+                                                    file_destination, n_files)
+                        csv_writer = csv.DictWriter(processed_file,
+                                                    fieldnames=columns)
+                        csv_writer.writeheader()
+                    else:
+                        pass
+                    write_line(processed_file, values)
+                else:
+                    pass
+            processed_file.close()
+    return flow
+
+if __name__ == "__main__":
+    flow = main()
+    flow.run()
