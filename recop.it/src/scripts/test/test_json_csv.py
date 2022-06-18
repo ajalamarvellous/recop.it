@@ -4,6 +4,7 @@ import pytest
 import tempfile
 import csv
 from unittest.mock import *
+from prefect import task
 
 # Adding preparation directiory to sys path
 sys.path.insert(0,"/home/ajala/Documents/Programming/recop.it/recop.it/src/scripts/preparation")
@@ -31,7 +32,8 @@ def mock_csv_writer():
 
 def test_read_json(LOCATION):
     with open(LOCATION, "rb") as f:
-        y = read_json(f.readline())
+        #y = read_json(f.readline())
+        y = read_json.run(f.readline())
         assert isinstance(y, dict) is True
 
 def test_get_columns(create_mock_dict):
@@ -56,7 +58,7 @@ def test_get_values(create_mock_dict):
     columns, all_prod_desc = ["a", "b", "c", "d", "e", "g", "f:", "z"], ["f:", "z"]
     expected_values = [5.0, "2", "true",  "05 4, 2014", "A2IC3NZN488KWK",
                        "Ruby Tulip", "Paperback", "null"]
-    values = get_values(create_mock_dict, columns, all_prod_desc)
+    values = get_values.run(create_mock_dict, columns, all_prod_desc)
     assert isinstance(values, dict)
     assert values["f:"] == "Paperback"
     assert values["z"] == "null"
@@ -71,7 +73,7 @@ def test_get_all_desc(LOCATION):
 
 
 def test_get_file_destination(LOCATION):
-    loc = get_file_destination(LOCATION)
+    loc = get_file_destination.run(LOCATION)
     assert os.path.exists(loc)
     assert loc.endswith(r"/processed/")
     assert "data" in loc.split(r"/")
@@ -79,7 +81,7 @@ def test_get_file_destination(LOCATION):
 
 
 def test_create_file(LOCATION):
-    file, n_files = create_file(LOCATION, 0)
+    file, n_files = create_file.run(LOCATION, 0)
     assert n_files == 1
     assert file.mode == "w"
     assert file.name.endswith("FILE_0.csv")
@@ -112,7 +114,7 @@ def test_write_line(mock_csv_writer, create_mock_dict):
     file_writer = csv.DictWriter(file,
                                 fieldnames = ["a", "b", "c", "d", "e", "g"])
     file_writer.writeheader()
-    write_line(file_writer, create_mock_dict)
+    write_line.run(file_writer, create_mock_dict)
     file.seek(0)
     file_reader = csv.reader(file)
     for line in file_reader:
