@@ -172,7 +172,7 @@ def create_file(file_destination, n_files):
     filename = file_destination + "FILE_" + str(n_files) + ".csv"
     file = open(filename, "w", newline="")
     n_files += 1
-    return file, n_files
+    return (file, n_files)
 
 
 def PRODUCT_DESC_PRESENT(line_dict):
@@ -198,7 +198,7 @@ def NEW_FILE_BREAK(n_rows):
     else:
         return False
 
-
+@task
 def write_line(csv_writer, values):
     """
     This function writes a new line into the csv file containing all our data
@@ -216,7 +216,7 @@ def main():
             file_destination = get_file_destination(LOCATION)
             processed_file, n_files = create_file(file_destination, n_files)
             csv_writer = None
-            for line in file:
+            for line in tqdm(file):
                 line_dict = read_json(line)
                 if n_rows == 1:
                     columns = get_columns(line_dict, all_prod_desc)
