@@ -5,6 +5,7 @@ import tempfile
 import csv
 from unittest.mock import *
 from prefect import task
+import logging
 
 # Adding preparation directiory to sys path
 sys.path.insert(0,"/home/ajala/Documents/Programming/recop.it/recop.it/src/scripts/preparation")
@@ -66,8 +67,8 @@ def test_get_values(create_mock_dict):
 
 
 @pytest.mark.skip(reason="Tested already and takes too long to load")
-def test_get_all_desc(LOCATION):
-    desc_keys = get_all_desc_keys(LOCATION)
+def test_get_all_desc_keys(LOCATION):
+    desc_keys = get_all_desc_keys.run(LOCATION)
     assert isinstance(desc_keys, list)
     assert len(desc_keys) != 0
 
