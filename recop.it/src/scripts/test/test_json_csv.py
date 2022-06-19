@@ -39,20 +39,20 @@ def test_read_json(LOCATION):
 
 def test_get_columns(create_mock_dict):
     DESC = ["h", "i", "j"]
-    columns = get_columns(create_mock_dict, DESC)
+    columns = get_columns.run(create_mock_dict, DESC)
     assert len(columns) == 9
     assert "style" not in columns
     assert isinstance(columns, list)
 
 
 def test_get_desc_keys(create_mock_dict):
-    x = get_desc_keys(create_mock_dict)
+    x = get_desc_keys.run(create_mock_dict)
     assert isinstance(x, list)
     assert len(x) == 1
     assert x[0] == "f:"
     y = create_mock_dict
     del y["style"]
-    assert get_desc_keys(y) is None
+    assert get_desc_keys.run(y) is None
 
 
 def test_get_values(create_mock_dict):
@@ -124,6 +124,14 @@ def test_write_line(mock_csv_writer, create_mock_dict):
              "A2IC3NZN488KWK", "Ruby Tulip"]
     assert new_line == answer
 
+@pytest.mark.parametrize("input, expected", [
+                        (" Ajala", "Ajala"),
+                        ("Marve      ", "Marve"),
+                        (120380, 120380),
+                        (True, True),
+                        (1500000, 1500000),
+                        ("    Holy crap     ", "Holy crap")
+                        ])
 
-def test_main():
-    pass
+def test_strip_values(input, expected):
+    assert strip_values(input) == expected
