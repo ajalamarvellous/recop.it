@@ -25,12 +25,12 @@ from prefect import task, Flow
 # Location to the json file
 LOCATION = "../../data/raw/Clothing_Shoes_and_Jewelry_5.json"
 
-#@task
+@task
 def read_json(line):
     """This function reads a line of the json file as a dictionary"""
     return orjson.loads(line)
 
-
+@task
 def get_columns(json_line, descriptions):
     """
     This function gets the keys (to be used as columns) and the description
@@ -56,7 +56,7 @@ def get_columns(json_line, descriptions):
     column_keys.remove("style")
     return column_keys
 
-
+@task
 def get_desc_keys(prod_dict):
     """
     This function gets the description keys in each data entry i.e each line
@@ -94,7 +94,7 @@ def strip_values(value_):
     else:
         value_
 
-#@task
+@task
 def get_values(prod_dict, columns, all_prod_desc):
     """
     This function gets the values from the keys of the json file present
@@ -138,7 +138,7 @@ def get_values(prod_dict, columns, all_prod_desc):
                 new_prod_dict[key] = strip_values(value)
     return new_prod_dict
 
-#@task
+@task
 def get_all_desc_keys(LOCATION):
     """
     This function combines all the descriptions of each data entry to obtain
@@ -149,8 +149,8 @@ def get_all_desc_keys(LOCATION):
     file = open(LOCATION, "rb")
     desc = list()
     for line in tqdm(file, desc="Getting all the descriptions"):
-        json_dict = read_json(line)
-        line_desc = get_desc_keys(json_dict)
+        json_dict = read_json.run(line)
+        line_desc = get_desc_keys.run(json_dict)
         if line_desc is not None:
             desc.extend(line_desc)
         else:
@@ -162,7 +162,7 @@ def get_all_desc_keys(LOCATION):
 # all_desc = get_all_desc(LOCATION)
 # -
 
-#@task
+@task
 def get_file_destination(LOCATION):
     """
     This function sets the destination to save the files to as 'data/processed'
@@ -170,7 +170,7 @@ def get_file_destination(LOCATION):
     destination_list = LOCATION.split("/")
     return "/".join(destination_list[:-2]) + str("/processed/")
 
-#@task(nout=2)
+@task(nout=2)
 def create_file(file_destination, n_files):
     """This function creates a new file where the csv file will be saved"""
     filename = file_destination + "FILE_" + str(n_files) + ".csv"
@@ -202,7 +202,7 @@ def NEW_FILE_BREAK(n_rows):
     else:
         return False
 
-#@task
+@task
 def write_line(csv_writer, values):
     """
     This function writes a new line into the csv file containing all our data
@@ -211,43 +211,42 @@ def write_line(csv_writer, values):
 
 
 def main():
-    #with Flow(name="json_to_csv_etl") as flow:
-    n_rows = 1
-    n_files = 1
-    columns = list()
-    all_prod_desc = get_all_desc_keys(LOCATION)
-    with open(LOCATION, "rb") as file:
-        file_destination = get_file_destination(LOCATION)
-        processed_file, n_files = create_file(file_destination, n_files)
-        csv_writer = None
-        for line in tqdm(file):
-            line_dict = read_json(line)
-            if n_rows == 1:
-                columns = get_columns(line_dict, all_prod_desc)
-                csv_writer = csv.DictWriter(processed_file,
-                                            fieldnames=columns)
-                csv_writer.writeheader()
-            else:
-                pass
-            if PRODUCT_DESC_PRESENT(line_dict):
-                n_rows += 1
-                values = get_values(line_dict,columns, all_prod_desc)
-                if NEW_FILE_BREAK(n_rows):
-                    processed_file.close()
-                    processed_file, n_files = create_file(
-                                                file_destination, n_files)
+    with Flow(name="json_to_csv_etl") as flow:
+        n_rows = 1
+        n_files = 1
+        columns = list()
+        all_prod_desc = get_all_desc_keys.run(LOCATION)
+        with open(LOCATION, "rb") as file:
+            file_destination = get_file_destination.run(LOCATION)
+            processed_file, n_files = create_file.run(file_destination, n_files)
+            csv_writer = None
+            for line in tqdm(file):
+                line_dict = read_json.run(line)
+                if n_rows == 1:
+                    columns = get_columns.run(line_dict, all_prod_desc)
                     csv_writer = csv.DictWriter(processed_file,
                                                 fieldnames=columns)
                     csv_writer.writeheader()
                 else:
                     pass
-                write_line(csv_writer, values)
-            else:
-                pass
-        processed_file.close()
-    #return flow
+                if PRODUCT_DESC_PRESENT(line_dict):
+                    n_rows += 1
+                    values = get_values.run(line_dict,columns, all_prod_desc)
+                    if NEW_FILE_BREAK(n_rows):
+                        processed_file.close()
+                        processed_file, n_files = create_file.run(
+                                                    file_destination, n_files)
+                        csv_writer = csv.DictWriter(processed_file,
+                                                    fieldnames=columns)
+                        csv_writer.writeheader()
+                    else:
+                        pass
+                    write_line.run(csv_writer, values)
+                else:
+                    pass
+            processed_file.close()
+    return flow
 
 if __name__ == "__main__":
-    #flow = main()
-    #flow.run()
-    main()
+    flow = main()
+    flow.run()
