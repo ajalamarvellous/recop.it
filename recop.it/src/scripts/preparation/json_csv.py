@@ -21,6 +21,12 @@ import orjson
 from tqdm import tqdm
 import csv
 from prefect import task, Flow
+import logging
+
+logging.basicConfig(format="%(asctime)s [%(levelname)s] \
+                            %(funcName)s: %(message)s",
+                    level=logging.DEBUG)
+logger = logging.getLogger()
 
 # Location to the json file
 LOCATION = "../../data/raw/Clothing_Shoes_and_Jewelry_5.json"
@@ -54,6 +60,7 @@ def get_columns(json_line, descriptions):
     column_keys = list(json_line.keys())
     column_keys.extend(descriptions)
     column_keys.remove("style")
+    logger.info(f"{'-'*20}Columns in the file obtaained successfuly{'-'*20}")
     return column_keys
 
 @task
@@ -155,6 +162,7 @@ def get_all_desc_keys(LOCATION):
             desc.extend(line_desc)
         else:
             pass
+    logger.info(f"{'-'*20}all product desc keys obtained successfuly{'-'*20}")
     return list(set(desc))
 
 
@@ -176,6 +184,7 @@ def create_file(file_destination, n_files):
     filename = file_destination + "FILE_" + str(n_files) + ".csv"
     file = open(filename, "w", newline="")
     n_files += 1
+logger.info(f"{'-'*20}file {filename} created successfuly{'-'*20}")
     return file, n_files
 
 
@@ -189,6 +198,7 @@ def PRODUCT_DESC_PRESENT(line_dict):
     if desc is None:
         return False
     else:
+        logger.info(f"{'-'*20}product desc keys absent thus passing....{'-'*20}")
         return True
 
 
@@ -198,6 +208,7 @@ def NEW_FILE_BREAK(n_rows):
     """
     expected_break = 500000
     if n_rows % expected_break == 0:
+        logger.info(f"{'-'*20}500,000 lines written successfuly{'-'*20}")
         return True
     else:
         return False
