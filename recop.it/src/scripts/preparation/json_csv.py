@@ -23,18 +23,22 @@ import csv
 from prefect import task, Flow
 import logging
 
-logging.basicConfig(format="%(asctime)s [%(levelname)s] \
+logging.basicConfig(
+    format="%(asctime)s [%(levelname)s] \
                             %(funcName)s: %(message)s",
-                    level=logging.DEBUG)
+    level=logging.DEBUG,
+)
 logger = logging.getLogger()
 
 # Location to the json file
 LOCATION = "../../data/raw/Clothing_Shoes_and_Jewelry_5.json"
 
+
 @task
 def read_json(line):
     """This function reads a line of the json file as a dictionary"""
     return orjson.loads(line)
+
 
 @task
 def get_columns(json_line, descriptions):
@@ -62,6 +66,7 @@ def get_columns(json_line, descriptions):
     column_keys.remove("style")
     logger.info(f"{'-'*20}Columns in the file obtaained successfuly{'-'*20}")
     return column_keys
+
 
 @task
 def get_desc_keys(prod_dict):
@@ -94,12 +99,14 @@ def get_desc_keys(prod_dict):
     else:
         return None
 
+
 def strip_values(value_):
     """This function strips the strings or return the original value"""
     if type(value_) is str:
         return value_.strip()
     else:
-        value_
+        return value_
+
 
 @task
 def get_values(prod_dict, columns, all_prod_desc):
@@ -145,6 +152,7 @@ def get_values(prod_dict, columns, all_prod_desc):
                 new_prod_dict[key] = strip_values(value)
     return new_prod_dict
 
+
 @task
 def get_all_desc_keys(LOCATION):
     """
@@ -166,10 +174,6 @@ def get_all_desc_keys(LOCATION):
     return list(set(desc))
 
 
-# +
-# all_desc = get_all_desc(LOCATION)
-# -
-
 @task
 def get_file_destination(LOCATION):
     """
@@ -178,13 +182,14 @@ def get_file_destination(LOCATION):
     destination_list = LOCATION.split("/")
     return "/".join(destination_list[:-2]) + str("/processed/")
 
+
 @task(nout=2)
 def create_file(file_destination, n_files):
     """This function creates a new file where the csv file will be saved"""
     filename = file_destination + "FILE_" + str(n_files) + ".csv"
     file = open(filename, "w", newline="")
     n_files += 1
-logger.info(f"{'-'*20}file {filename} created successfuly{'-'*20}")
+    logger.info(f"{'-'*20}file {filename} created successfuly{'-'*20}")
     return file, n_files
 
 
@@ -193,12 +198,13 @@ def PRODUCT_DESC_PRESENT(line_dict):
     This function evaluates if product description (key 'style')
     exists and return bool yes or no
     """
-    STYLE = 'style'
+    STYLE = "style"
     desc = line_dict.get(STYLE)
     if desc is None:
         return False
     else:
-        logger.info(f"{'-'*20}product desc keys absent thus passing....{'-'*20}")
+        # logger.info(f"
+        #    {'-'*20}product desc keys absent thus passing....{'-'*20}")
         return True
 
 
@@ -212,6 +218,7 @@ def NEW_FILE_BREAK(n_rows):
         return True
     else:
         return False
+
 
 @task
 def write_line(csv_writer, values):
@@ -235,20 +242,19 @@ def main():
                 line_dict = read_json.run(line)
                 if n_rows == 1:
                     columns = get_columns.run(line_dict, all_prod_desc)
-                    csv_writer = csv.DictWriter(processed_file,
-                                                fieldnames=columns)
+                    csv_writer = csv.DictWriter(processed_file, fieldnames=columns)
                     csv_writer.writeheader()
                 else:
                     pass
                 if PRODUCT_DESC_PRESENT(line_dict):
                     n_rows += 1
-                    values = get_values.run(line_dict,columns, all_prod_desc)
+                    values = get_values.run(line_dict, columns, all_prod_desc)
                     if NEW_FILE_BREAK(n_rows):
                         processed_file.close()
                         processed_file, n_files = create_file.run(
-                                                    file_destination, n_files)
-                        csv_writer = csv.DictWriter(processed_file,
-                                                    fieldnames=columns)
+                            file_destination, n_files
+                        )
+                        csv_writer = csv.DictWriter(processed_file, fieldnames=columns)
                         csv_writer.writeheader()
                     else:
                         pass
@@ -256,7 +262,9 @@ def main():
                 else:
                     pass
             processed_file.close()
+            logger.info(f"{'-'*20}Task complete, {n_rows} written....{'-'*20}")
     return flow
+
 
 if __name__ == "__main__":
     flow = main()
