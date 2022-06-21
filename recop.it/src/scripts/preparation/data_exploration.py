@@ -60,4 +60,10 @@ df.head()
 df.describe(include="all")
 
 df.info()
-    
+
+
+def get_columns(df):
+    return list(df.columns)
+
+
+columns
