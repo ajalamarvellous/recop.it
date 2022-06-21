@@ -67,3 +67,11 @@ def get_columns(df):
 
 
 columns
+
+import math
+
+
+def split_columns(columns):
+    divs = math.ceil(len(columns)/3)
+    div1, div2, div3 = columns[:divs], columns[divs:divs*2], columns[divs*2:]
+    return div1, div2, div3
