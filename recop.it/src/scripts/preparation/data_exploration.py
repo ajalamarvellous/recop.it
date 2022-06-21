@@ -75,3 +75,10 @@ def split_columns(columns):
     divs = math.ceil(len(columns)/3)
     div1, div2, div3 = columns[:divs], columns[divs:divs*2], columns[divs*2:]
     return div1, div2, div3
+
+
+def get_few_values(df):
+    values = list()
+    for x,y in zip(df.count(), df.count().index):
+        if x < 10000: values.append(y)
+    return values
