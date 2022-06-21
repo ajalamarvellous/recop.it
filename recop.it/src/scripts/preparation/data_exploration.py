@@ -26,42 +26,38 @@ import os
 #Location t
 location = "../../data/"
 
+
 # +
 # list of overview of all the data files
 # -
 
 # Go through all the folders and get the contents (leaf nodes)
-for dir_name, dirs, files in os.walk(location):
-    if dir_name_.endswith("/") is False:
-        for file in files:
-            file_name = os.path.join(dir_name, file)
-            print(f"{'-'*30}The filename is {file_name}{'-'*30}")
-            if file_name != "Clothing_Shoes_and_Jewelry_5.json":
-                f = open(file_name)
-                for i in range(5):
-                    print(f.readline())
+def first_5(location):
+    # getting the directory name, directories and files in the location
+    # directory from the top to the bottom
+    for dir_name, dirs, files in os.walk(location):
+        # obtain only end /leaf nodes (final directory)
+        if dir_name.endswith("/") is False:
+            for file in files:
+                # concatenate file name with dir_name
+                file_name = os.path.join(dir_name, file)
+                print(f"{'-'*30}The filename is {file_name}{'-'*30}")
+                if file_name != "Clothing_Shoes_and_Jewelry_5.json":
+                    # Open file
+                    f = open(file_name)
+                    # Read top 5 lines
+                    for i in range(5):
+                        print(f.readline())
+                print("_"*100)
             print("_"*100)
-        print("_"*100)
-        print(f"{'-'*30} Opening another folder {'-'*30}")
+            print(f"{'-'*30} Opening another folder {'-'*30}")
 
 
+df = pd.read_csv(location+"processed/FILE_1.csv")
 
+df.head()
 
+df.describe(include="all")
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
+df.info()
+    
