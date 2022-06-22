@@ -22,6 +22,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 import os
+import time
+import math
 
 #Location t
 location = "../../data/"
@@ -73,8 +75,6 @@ def get_columns(df):
 
 columns = get_columns(df)
 
-import math
-import time
 
 
 def split_columns(columns):
@@ -117,16 +117,20 @@ all_few_values = get_all_few_values(location)
 
 all_few_values
 
-df.info()
 
-df.info(memory_usage="deep")
+def runtime(func):
+    """Decorator function to return function runtime"""
+    def wrapper(*args, **kwargs):
+        """Decorator wrapper"""
+        start_time = time.perf_counter()
+        func(*args, **kwargs)
+        print(f"Runtime for {func.__name__} is: {time.perf_counter()-start_time:.6f}s")
+    return wrapper
 
-# +
-import sys
 
-sys.getsizeof(df)
-# -
 
-df.memory_usage().sum()
+
+
+
 
 
