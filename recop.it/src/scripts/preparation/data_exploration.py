@@ -80,6 +80,18 @@ df.describe(include="all")
 
 df.info()
 
+'Team Name:',
+  'Length:',
+  'Product Packaging:',
+  'Size per Pearl:',
+  'Format:',
+  'Primary Stone Gem Type:',
+  'Package Quantity:',
+  'Metal Type:',
+  'Color Name:',
+  'Model Number:',
+  'Style:'])
+
 
 def get_columns(df):
     return list(df.columns)
@@ -131,7 +143,7 @@ def count_few_values(few_values_dict):
     """Returns number of time few values columns appear in all the preprocessed files"""
     x = Counter()
     for values in few_values_dict.values():
-        x.update(values)
+        x.update(values)  
     return x
 
 
@@ -155,3 +167,21 @@ def remove_columns(columns, col_2_remove):
     for value in col_2_remove:
         columns.remove(value)
     return columns
+
+
+remove_list = less_than_min_values(df=df, min_rows=1)
+new_columns = remove_columns(columns=columns, col_2_remove=remove_list)
+
+
+div1, div2, div3 = split_columns(new_columns)
+
+
+def div_df(div):
+    df_div_notnull = eval(not_null(div))
+    return df_div_notnull[div]
+
+
+df_div1_notnull = div_df(div1)
+df_div1_notnull.head()
+
+
