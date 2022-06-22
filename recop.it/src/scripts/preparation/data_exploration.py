@@ -142,12 +142,20 @@ def count_few_values(few_values_dict):
     """Returns number of time few values columns appear in all the preprocessed files"""
     x = Counter()
     for values in few_values_dict.values():
-        x.update(values)  
+        x.update(values)
     return x
 
 
 min_1_value = count_few_values(all_few_values)
 
 
+def get_counter_values(counter_values):
+    values_list = list()
+    for value in counter_values:
+        values_list.append(value)
+    return values_list
 
 
+min1_value_list = get_counter_values(min_1_value)
+
+min1_value_list
