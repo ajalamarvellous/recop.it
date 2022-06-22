@@ -185,3 +185,16 @@ df_div1_notnull = div_df(div1)
 df_div1_notnull.head()
 
 
+@runtime
+def view_file(df, columns_to_view, columns_to_search):
+    for x in columns_to_search:
+        columns_to_view.append(x)
+        print(df[df[x].notnull()][columns_to_view].head(15))
+        print("_"*30)
+        columns_to_view.remove(x)
+
+
+columns = get_columns(df)
+columns_to_view = columns[3:9]
+columns_to_search = columns[9:]
+view_file(df, columns_to_view, columns_to_search)
