@@ -53,7 +53,12 @@ def first_5(location):
             print(f"{'-'*30} Opening another folder {'-'*30}")
 
 
-df = pd.read_csv(location+"processed/FILE_1.csv")
+def get_df(location, file_name):
+    """This function returns a dataframe"""
+    return pd.read_csv(location+"processed/"+file_name)
+
+
+df = get_df(location=location, file_name="FILE_1.csv")
 
 df.head()
 
