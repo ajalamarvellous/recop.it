@@ -85,9 +85,6 @@ def get_columns(df):
     return list(df.columns)
 
 
-columns = get_columns(df)
-
-
 def split_columns(columns):
     divs = math.ceil(len(columns)/3)
     div1, div2, div3 = columns[:divs], columns[divs:divs*2], columns[divs*2:]
@@ -111,11 +108,6 @@ def not_null(columns):
     return f"df[{str_list}]"
 
 
-div1, div2, div3 = split_columns(columns)
-
-few_values = get_few_values(df, 1)
-
-
 def all_files(location):
     """This function returns list of all processed csv"""
     return os.listdir(os.path.join(location, "processed"))
@@ -133,9 +125,6 @@ def all_less_than_min_values(location, min_rows):
 
 
 all_few_values = get_all_few_values(location=location, min_rows=1)
-
-
-
 
 
 def count_few_values(few_values_dict):
@@ -159,3 +148,12 @@ def get_counter_values(counter_values):
 min1_value_list = get_counter_values(min_1_value)
 
 min1_value_list
+
+columns = get_columns(df)
+
+
+def remove_columns(columns, col_2_remove):
+    """Remove values in col_2_remove from columns"""
+    for value in col_2_remove:
+        columns.remove(value)
+    return columns
