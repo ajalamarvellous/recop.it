@@ -76,7 +76,6 @@ def get_columns(df):
 columns = get_columns(df)
 
 
-
 def split_columns(columns):
     divs = math.ceil(len(columns)/3)
     div1, div2, div3 = columns[:divs], columns[divs:divs*2], columns[divs*2:]
@@ -100,6 +99,7 @@ def all_files(location):
     return os.listdir(os.path.join(location, "processed"))
 
 
+@runtime
 def get_all_few_values(location):
     """This function returns a list of all few values in each of the files"""
     files = all_files(location)
@@ -110,12 +110,7 @@ def get_all_few_values(location):
     return all_few_values
 
 
-# +
-
 all_few_values = get_all_few_values(location)
-# -
-
-all_few_values
 
 
 def runtime(func):
@@ -123,11 +118,18 @@ def runtime(func):
     def wrapper(*args, **kwargs):
         """Decorator wrapper"""
         start_time = time.perf_counter()
-        func(*args, **kwargs)
+        result = func(*args, **kwargs)
         print(f"Runtime for {func.__name__} is: {time.perf_counter()-start_time:.6f}s")
+        return result
     return wrapper
 
 
+from collections import Counter
+
+x = Counter()
+for key in all_few_values:
+    x.update(all_few_values[key])  
+x
 
 
 
