@@ -89,6 +89,19 @@ def get_few_values(df):
     return values
 
 
+def not_null(columns):
+    final_list = list()
+    for x in columns:
+        y = f"(df['{x}'].notnull())"
+        final_list.append(y)
+    str_list =  " & ".join(final_list)
+    return f"df[{str_list}]"
+
+
+div1, div2, div3 = split_columns(columns)
+
+
+
 few_values = get_few_values(df)
 
 few_values
