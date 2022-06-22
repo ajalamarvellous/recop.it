@@ -24,9 +24,21 @@ import seaborn as sns
 import os
 import time
 import math
+from collections import Counter
 
 #Location t
 location = "../../data/"
+
+
+def runtime(func):
+    """Decorator function to return function runtime"""
+    def wrapper(*args, **kwargs):
+        """Decorator wrapper"""
+        start_time = time.perf_counter()
+        result = func(*args, **kwargs)
+        print(f"Runtime for {func.__name__} is: {time.perf_counter()-start_time:.6f}s")
+        return result
+    return wrapper
 
 
 # +
@@ -82,10 +94,11 @@ def split_columns(columns):
     return div1, div2, div3
 
 
-def get_few_values(df):
+def less_than_min_values(df, min_rows):
+    """Returns function with less than the specified rows"""
     values = list()
     for x,y in zip(df.count(), df.count().index):
-        if x < 10000: values.append(y)
+        if x < min_rows: values.append(y)
     return values
 
 
@@ -100,11 +113,7 @@ def not_null(columns):
 
 div1, div2, div3 = split_columns(columns)
 
-
-
-few_values = get_few_values(df)
-
-few_values
+few_values = get_few_values(df, 1)
 
 
 def all_files(location):
@@ -113,38 +122,31 @@ def all_files(location):
 
 
 @runtime
-def get_all_few_values(location):
-    """This function returns a list of all few values in each of the files"""
-    files = all_files(location)
+def all_less_than_min_values(location, min_rows):
+    """This function returns a list of all fewer values than min_rows in each of the files"""
+    files = all_files(location=location)
     all_few_values = dict()
     for file in files:
-        df = get_df(location=location, file_name = file)
-        all_few_values[file] = get_few_values(df)
+        df = get_df(location=location, file_name=file)
+        all_few_values[file] = get_few_values(df, min_rows)
     return all_few_values
 
 
-all_few_values = get_all_few_values(location)
+all_few_values = get_all_few_values(location=location, min_rows=1)
 
 
-def runtime(func):
-    """Decorator function to return function runtime"""
-    def wrapper(*args, **kwargs):
-        """Decorator wrapper"""
-        start_time = time.perf_counter()
-        result = func(*args, **kwargs)
-        print(f"Runtime for {func.__name__} is: {time.perf_counter()-start_time:.6f}s")
-        return result
-    return wrapper
 
 
-from collections import Counter
 
-x = Counter()
-for key in all_few_values:
-    x.update(all_few_values[key])  
-x
+def count_few_values(few_values_dict):
+    """Returns number of time few values columns appear in all the preprocessed files"""
+    x = Counter()
+    for values in few_values_dict.values():
+        x.update(values)  
+    return x
 
 
+min_1_value = count_few_values(all_few_values)
 
 
 
