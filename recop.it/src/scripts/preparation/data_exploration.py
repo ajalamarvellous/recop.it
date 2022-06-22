@@ -66,9 +66,10 @@ def get_columns(df):
     return list(df.columns)
 
 
-columns
+columns = get_columns(df)
 
 import math
+import time
 
 
 def split_columns(columns):
@@ -82,3 +83,17 @@ def get_few_values(df):
     for x,y in zip(df.count(), df.count().index):
         if x < 10000: values.append(y)
     return values
+
+
+few_values = get_few_values(df)
+
+few_values
+
+
+def all_files(location):
+    """This function returns list of all processed csv"""
+    return os.listdir(os.path.join(location, "processed"))
+
+
+
+
