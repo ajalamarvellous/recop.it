@@ -138,14 +138,12 @@ def count_few_values(few_values_dict):
 min_1_value = count_few_values(all_few_values)
 
 
-def get_counter_values(counter_values):
-    values_list = list()
-    for value in counter_values:
-        values_list.append(value)
-    return values_list
+def get_unique_values(values_dict):
+    final_list = list()
+    for list_ in all_few_values.values():
+        final_list.extend(list_)
+    return list(set(final_list))
 
-
-min1_value_list = get_counter_values(min_1_value)
 
 min1_value_list
 
