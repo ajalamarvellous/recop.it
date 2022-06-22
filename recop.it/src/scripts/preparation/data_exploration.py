@@ -100,5 +100,33 @@ def all_files(location):
     return os.listdir(os.path.join(location, "processed"))
 
 
+def get_all_few_values(location):
+    """This function returns a list of all few values in each of the files"""
+    files = all_files(location)
+    all_few_values = dict()
+    for file in files:
+        df = get_df(location=location, file_name = file)
+        all_few_values[file] = get_few_values(df)
+    return all_few_values
+
+
+# +
+
+all_few_values = get_all_few_values(location)
+# -
+
+all_few_values
+
+df.info()
+
+df.info(memory_usage="deep")
+
+# +
+import sys
+
+sys.getsizeof(df)
+# -
+
+df.memory_usage().sum()
 
 
