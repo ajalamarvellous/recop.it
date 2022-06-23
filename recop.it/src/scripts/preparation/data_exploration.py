@@ -217,20 +217,27 @@ columns_to_view = columns[3:9]
 diameter_df = view_file(df, columns_to_view, "Diameter:")
 
 
-def view_n_column(df, column, n_iters):
-    n = 0
-    for x in df[column]:
-        if n > n_iters:
-            break
-        else:
-            print(x)
-            n += 1
+def get_values(df, column, n_iters=0):
+    """
+    Print n_iters rows of the specied column if n_iters is provided else 
+    return all values in the specied column instead
+    """
+    if n_iters != 0:
+        n = 0
+        for x in df[column]:
+            if n > n_iters:
+                break
+            else:
+                print(x)
+                n += 1
+    else:
+        return list(df[column].values)
 
 
-view_n_column(diameter_df, "reviewText", 15)
+get_values(diameter_df, "reviewText", 15)
 
 sizename_df = view_file(df, columns_to_view, "Size Name:")
-view_n_column(sizename_df, "reviewText", 15)
+size = get_values(sizename_df, "Size Name:")
 
 sizename_df["Size Name:"].value_counts()
 
@@ -262,11 +269,12 @@ def remove_values_from_all_file(location, columns_to_remove):
     """
     
     # list of all the files
-    files = all_files(location)
+    files = all_files(location=location)
     # Obtaining each file in the list
     for file in files:
         # open file
-        df = get_df(location, file_name)
+        df = get_df(location=location,
+                    file_name=file)
         # asin list to store all 'asin' values ('asin' values are unique 
         # identifiers of the product)
         asin_list = list()
@@ -275,9 +283,12 @@ def remove_values_from_all_file(location, columns_to_remove):
             # get all columns in the dataset
             all_columns = get_columns(df)
             # get not null rows of the column
-            notnull_values = eval(not_null(column))
+            notnull_values = view_file(df=df,
+                                       columns_to_view=all_columns[3:9],
+                                       columns_to_search=column)
             # get 'asin' values of the notnull values
-            notnull_asin_values = get_values(notnull_values)
+            notnull_asin_values = get_values(df=notnull_values,
+                                             column="asin")
             # add to not null 'asin' values to asin_list
             asin_list.extend(notnull_asin_values)
             # drop column
@@ -290,3 +301,5 @@ def remove_values_from_all_file(location, columns_to_remove):
         delete_rows(df, indices)
         # resave file
         save_file(location, file)
+
+
