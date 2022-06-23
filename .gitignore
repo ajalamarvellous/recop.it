@@ -1,6 +1,5 @@
 venv/
 mlruns
-recop.it/data
 recop.it/src/notebooks
 recop.it/src/scripts/ingest/.ipynb*
 recop.it/src/scripts/modeling/.ipynb*
