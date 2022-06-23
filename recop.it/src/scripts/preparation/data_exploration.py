@@ -271,6 +271,11 @@ def drop_column(df, column):
     return df.drop(columns=column, inplace=True)
 
 
+def delete_rows(df, indices):
+    """This function deletes rows in matching the indices provided"""
+    df.drop(indices, inplace=True)
+
+
 @runtime
 def remove_values_from_all_file(location, columns_to_remove):
     """
