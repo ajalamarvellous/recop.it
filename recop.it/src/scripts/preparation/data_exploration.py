@@ -223,6 +223,9 @@ print(modelnumb_df["Model Number:"].value_counts())
 view_n_column(modelnumb_df, "reviewText", 15)
 
 
+def get_indices(df):
+    """Return indices of all rows in the dataset"""
+    return list(df.index.values)
 
 
 
