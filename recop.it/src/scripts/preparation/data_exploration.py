@@ -135,15 +135,19 @@ def count_few_values(few_values_dict):
     return x
 
 
-min_1_value = count_few_values(all_few_values)
+min_1_value = count_few_values(min1_values)
+
+min_1_value
 
 
 def get_unique_values(values_dict):
     final_list = list()
-    for list_ in all_few_values.values():
+    for list_ in values_dict.values():
         final_list.extend(list_)
     return list(set(final_list))
 
+
+min1_value_list = get_unique_values(min1_values)
 
 min1_value_list
 
@@ -190,3 +194,18 @@ columns = get_columns(df)
 columns_to_view = columns[3:9]
 columns_to_search = columns[9:]
 view_file(df, columns_to_view, columns_to_search)
+
+columns
+
+columns_to_view = columns[3:9]
+diameter_df = view_file(df, columns_to_view, "Diameter:")
+
+
+def view_n_column(df, column, n_iters):
+    n = 0
+    for x in df[column]:
+        if n > n_iters:
+            break
+        else:
+            print(x)
+            n += 1
