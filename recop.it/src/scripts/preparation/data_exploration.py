@@ -141,7 +141,7 @@ def count_few_values(few_values_dict):
     """Returns number of time few values columns appear in all the preprocessed files"""
     x = Counter()
     for values in few_values_dict.values():
-        x.update(values)
+        x.update(values)  
     return x
 
 
@@ -248,15 +248,26 @@ def remove_values_from_all_file(location, columns_to_remove):
     """
     This function removes values we don't want from the entire dataset i.e
     all files in the processed folder and saves them back
+    
+    Parameter(s)
+    --------------
+    location : str
+               location to the data folder
+    columns_to_remove : list
+                        list of columns to purge their values
+                        
+    Return(s)
+    -----------
+    None
     """
-
+    
     # list of all the files
     files = all_files(location)
     # Obtaining each file in the list
     for file in files:
         # open file
         df = get_df(location, file_name)
-        # asin list to store all 'asin' values ('asin' values are unique
+        # asin list to store all 'asin' values ('asin' values are unique 
         # identifiers of the product)
         asin_list = list()
         # get each column to remove their values
