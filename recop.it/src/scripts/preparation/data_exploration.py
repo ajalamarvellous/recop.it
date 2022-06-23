@@ -250,6 +250,11 @@ def get_indices(df):
     return list(df.index.values)
 
 
+def drop_column(df, column):
+    """This function drops a column from a dataset"""
+    return df.drop(columns=column, inplace=True)
+
+
 @runtime
 def remove_values_from_all_file(location, columns_to_remove):
     """
@@ -292,7 +297,8 @@ def remove_values_from_all_file(location, columns_to_remove):
             # add to not null 'asin' values to asin_list
             asin_list.extend(notnull_asin_values)
             # drop column
-            drop_column(df, column)
+            drop_column(df=df,
+                        column=column)
         # get unique "asin" values
         unique_asin_values = get_unique(asin_list)
         # get indices of asin values
@@ -301,5 +307,3 @@ def remove_values_from_all_file(location, columns_to_remove):
         delete_rows(df, indices)
         # resave file
         save_file(location, file)
-
-
