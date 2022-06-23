@@ -276,6 +276,12 @@ def delete_rows(df, indices):
     df.drop(indices, inplace=True)
 
 
+def save_file(df, location, filename):
+    """This function saves a new csv file"""
+    df.to_csv(f"{location}processes/{filename}")
+    print(f'{"."*20}Saving file {filename} now{"."*20}')
+
+
 @runtime
 def remove_values_from_all_file(location, columns_to_remove):
     """
@@ -327,6 +333,11 @@ def remove_values_from_all_file(location, columns_to_remove):
                               column="asin",
                               values=unique_asin_values)
         # delete rows matching the indices
-        delete_rows(df, indices)
+        delete_rows(df=df,
+                    indices=indices)
         # resave file
-        save_file(location, file)
+        save_file(df=df,
+                  location=location,
+                  filename=file)
+
+
