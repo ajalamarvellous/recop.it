@@ -254,9 +254,16 @@ modelnumb_df = view_file(df, columns_to_view, 'Model Number:')
 print(modelnumb_df["Model Number:"].value_counts())
 # view_n_column(modelnumb_df, "reviewText", 15)
 
-def get_indices(df):
-    """Return indices of all rows in the dataset"""
-    return list(df.index.values)
+def get_indices(df, column, values):
+    """
+    Return indices of all rows that the column value matches those in 
+    values in the dataset
+    """
+    indices_list = list()
+    for value in values:
+        df1 = df[df[column] == value]
+        indices_list.extend(list(df1.index))
+    return indices_list
 
 
 def drop_column(df, column):
@@ -311,7 +318,9 @@ def remove_values_from_all_file(location, columns_to_remove):
         # get unique "asin" values
         unique_asin_values = get_unique_values(asin_list)
         # get indices of asin values
-        indices = get_indices(df)
+        indices = get_indices(df=df,
+                              column="asin",
+                              values=unique_asin_values)
         # delete rows matching the indices
         delete_rows(df, indices)
         # resave file
