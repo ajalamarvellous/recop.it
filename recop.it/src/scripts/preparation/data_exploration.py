@@ -124,21 +124,24 @@ def all_less_than_min_values(location, min_rows):
     return all_few_values
 
 
-min1_values = all_less_than_min_values(location=location, min_rows=1)
-
+# +
+# min1_values = all_less_than_min_values(location=location, min_rows=1)
+# -
 
 def count_few_values(few_values_dict):
     """Returns number of time few values columns appear in all the preprocessed files"""
     x = Counter()
     for values in few_values_dict.values():
-        x.update(values)  
+        x.update(values)
     return x
 
 
 min_1_value = count_few_values(min1_values)
 
-min_1_value
 
+# +
+# min_1_value
+# -
 
 def get_unique_values(values_dict):
     final_list = list()
@@ -149,8 +152,10 @@ def get_unique_values(values_dict):
 
 min1_value_list = get_unique_values(min1_values)
 
-min1_value_list
 
+# +
+# min1_value_list
+# -
 
 def remove_columns(columns, col_2_remove):
     """Remove values in col_2_remove from columns"""
@@ -193,9 +198,11 @@ def view_file(df, columns_to_view, columns_to_search):
 columns = get_columns(df)
 columns_to_view = columns[3:9]
 columns_to_search = columns[9:]
-view_file(df, columns_to_view, columns_to_search)
+# view_file(df, columns_to_view, columns_to_search)
 
-columns
+# +
+# columns
+# -
 
 columns_to_view = columns[3:9]
 diameter_df = view_file(df, columns_to_view, "Diameter:")
@@ -220,15 +227,46 @@ sizename_df["Size Name:"].value_counts()
 
 modelnumb_df = view_file(df, columns_to_view, 'Model Number:')
 print(modelnumb_df["Model Number:"].value_counts())
-view_n_column(modelnumb_df, "reviewText", 15)
-
+# view_n_column(modelnumb_df, "reviewText", 15)
 
 def get_indices(df):
     """Return indices of all rows in the dataset"""
     return list(df.index.values)
 
 
+@runtime
+def remove_values_from_all_file(location):
+    """
+    This function removes values we don't want from the entire dataset i.e
+    all files in the processed folder and saves them back
+    """
 
-
-
-
+    # list of all the files
+    files = all_files(location)
+    # Obtaining each file in the list
+    for file in files:
+        # open file
+        df = get_df(location, file)
+        # asin list to store all 'asin' values ('asin' values are unique
+        # identifiers of the product)
+        asin_list = list()
+        # get each column to remove their values
+        for column in columns_to_remove:
+            # get all columns in the dataset
+            all_columns = get_columns(df)
+            # get not null rows of the column
+            notnull_values = not_null(column)
+            # get 'asin' values of the notnull values
+            notnull_asin_values = get_values(notnull_values)
+            # add to not null 'asin' values to asin_list
+            asin_list.extend(notnull_asin_values)
+            # drop column
+            drop_column(df, column)
+        # get unique "asin" values
+        unique_asin_values = get_unique(asin_list)
+        # get indices of asin values
+        indices = get_indices(df)
+        # delete rows matching the indices
+        delete_rows(df, indices)
+        # resave file
+        save_file(location, file)
