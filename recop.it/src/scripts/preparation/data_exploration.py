@@ -131,7 +131,7 @@ def count_few_values(few_values_dict):
     """Returns number of time few values columns appear in all the preprocessed files"""
     x = Counter()
     for values in few_values_dict.values():
-        x.update(values)
+        x.update(values)  
     return x
 
 
@@ -209,3 +209,23 @@ def view_n_column(df, column, n_iters):
         else:
             print(x)
             n += 1
+
+
+view_n_column(diameter_df, "reviewText", 15)
+
+sizename_df = view_file(df, columns_to_view, "Size Name:")
+view_n_column(sizename_df, "reviewText", 15)
+
+sizename_df["Size Name:"].value_counts()
+
+modelnumb_df = view_file(df, columns_to_view, 'Model Number:')
+print(modelnumb_df["Model Number:"].value_counts())
+view_n_column(modelnumb_df, "reviewText", 15)
+
+
+
+
+
+
+
+
