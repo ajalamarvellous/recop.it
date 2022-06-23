@@ -100,12 +100,21 @@ def less_than_min_values(df, min_rows):
 
 
 def not_null(columns):
-    final_list = list()
-    for x in columns:
-        y = f"(df['{x}'].notnull())"
-        final_list.append(y)
-    str_list =  " & ".join(final_list)
-    return f"df[{str_list}]"
+    """
+    Returns an executable str with eval() of rows in the columns which their
+    values are notnull
+    """
+    if isinstance(columns, list):
+        final_list = list()
+        for x in columns:
+            y = f"(df['{x}'].notnull())"
+            final_list.append(y)
+        str_list =  " & ".join(final_list)
+        return f"df[{str_list}]"
+    elif isinstance(columns, str):
+        return f"df[df[{columns}].notnull()]"
+    else:
+        return None
 
 
 def all_files(location):
@@ -235,7 +244,7 @@ def get_indices(df):
 
 
 @runtime
-def remove_values_from_all_file(location):
+def remove_values_from_all_file(location, columns_to_remove):
     """
     This function removes values we don't want from the entire dataset i.e
     all files in the processed folder and saves them back
@@ -246,7 +255,7 @@ def remove_values_from_all_file(location):
     # Obtaining each file in the list
     for file in files:
         # open file
-        df = get_df(location, file)
+        df = get_df(location, file_name)
         # asin list to store all 'asin' values ('asin' values are unique
         # identifiers of the product)
         asin_list = list()
@@ -255,7 +264,7 @@ def remove_values_from_all_file(location):
             # get all columns in the dataset
             all_columns = get_columns(df)
             # get not null rows of the column
-            notnull_values = not_null(column)
+            notnull_values = eval(not_null(column))
             # get 'asin' values of the notnull values
             notnull_asin_values = get_values(notnull_values)
             # add to not null 'asin' values to asin_list
