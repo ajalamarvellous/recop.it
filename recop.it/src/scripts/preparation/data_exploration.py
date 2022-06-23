@@ -152,11 +152,20 @@ min_1_value = count_few_values(min1_values)
 # min_1_value
 # -
 
-def get_unique_values(values_dict):
-    final_list = list()
-    for list_ in values_dict.values():
-        final_list.extend(list_)
-    return list(set(final_list))
+def get_unique_values(all_values):
+    """
+    Returns unique values in the all_values given on the assumption that
+    it is a dictionary or list
+    """
+    if isinstance(all_values, dict):
+        final_list = list()
+        for list_ in all_values.values():
+            final_list.extend(list_)
+        return list(set(final_list))
+    elif isinstance(all_values, list):
+        return list(set(all_values))
+    else:
+        return None
 
 
 min1_value_list = get_unique_values(min1_values)
@@ -300,7 +309,7 @@ def remove_values_from_all_file(location, columns_to_remove):
             drop_column(df=df,
                         column=column)
         # get unique "asin" values
-        unique_asin_values = get_unique(asin_list)
+        unique_asin_values = get_unique_values(asin_list)
         # get indices of asin values
         indices = get_indices(df)
         # delete rows matching the indices
