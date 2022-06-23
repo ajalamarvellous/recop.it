@@ -80,18 +80,6 @@ df.describe(include="all")
 
 df.info()
 
-'Team Name:',
-  'Length:',
-  'Product Packaging:',
-  'Size per Pearl:',
-  'Format:',
-  'Primary Stone Gem Type:',
-  'Package Quantity:',
-  'Metal Type:',
-  'Color Name:',
-  'Model Number:',
-  'Style:'])
-
 
 def get_columns(df):
     return list(df.columns)
@@ -132,18 +120,18 @@ def all_less_than_min_values(location, min_rows):
     all_few_values = dict()
     for file in files:
         df = get_df(location=location, file_name=file)
-        all_few_values[file] = get_few_values(df, min_rows)
+        all_few_values[file] = less_than_min_values(df, min_rows)
     return all_few_values
 
 
-all_few_values = get_all_few_values(location=location, min_rows=1)
+min1_values = all_less_than_min_values(location=location, min_rows=1)
 
 
 def count_few_values(few_values_dict):
     """Returns number of time few values columns appear in all the preprocessed files"""
     x = Counter()
     for values in few_values_dict.values():
-        x.update(values)  
+        x.update(values)
     return x
 
 
@@ -159,8 +147,6 @@ def get_unique_values(values_dict):
 
 min1_value_list
 
-columns = get_columns(df)
-
 
 def remove_columns(columns, col_2_remove):
     """Remove values in col_2_remove from columns"""
@@ -169,9 +155,9 @@ def remove_columns(columns, col_2_remove):
     return columns
 
 
+columns = get_columns(df)
 remove_list = less_than_min_values(df=df, min_rows=1)
 new_columns = remove_columns(columns=columns, col_2_remove=remove_list)
-
 
 div1, div2, div3 = split_columns(new_columns)
 
@@ -187,11 +173,17 @@ df_div1_notnull.head()
 
 @runtime
 def view_file(df, columns_to_view, columns_to_search):
-    for x in columns_to_search:
-        columns_to_view.append(x)
-        print(df[df[x].notnull()][columns_to_view].head(15))
-        print("_"*30)
-        columns_to_view.remove(x)
+    if isinstance(columns_to_search, list):
+        for x in columns_to_search:
+            columns_to_view.append(x)
+            print(df[df[x].notnull()][columns_to_view].head(15))
+            print("_"*30)
+            columns_to_view.remove(x)
+    else:
+        columns_to_view.append(columns_to_search)
+        df  = df[df[columns_to_search].notnull()][columns_to_view]
+        columns_to_view.remove(columns_to_search)
+    return df
 
 
 columns = get_columns(df)
