@@ -124,19 +124,22 @@ def all_files(location):
 
 
 @runtime
-def all_less_than_min_values(location, min_rows):
+def all_less_than_min_values(location, min_rows, return_counts=False):
     """This function returns a list of all fewer values than min_rows in each of the files"""
     files = all_files(location=location)
     all_few_values = dict()
     for file in files:
         df = get_df(location=location, file_name=file)
-        all_few_values[file] = less_than_min_values(df, min_rows)
+        values = less_than_min_values(df, min_rows)
+        if return_counts is False:
+            all_few_values[file] = values
+        elif return_counts is True and min_rows > 1:
+            all_few_values[file] = dict()
+            for index, value in zip(df[values].count().index,
+                            df[values].count()):
+                all_few_values[file][index] = value
     return all_few_values
 
-
-# +
-# min1_values = all_less_than_min_values(location=location, min_rows=1)
-# -
 
 def count_few_values(few_values_dict):
     """Returns number of time few values columns appear in all the preprocessed files"""
@@ -144,9 +147,6 @@ def count_few_values(few_values_dict):
     for values in few_values_dict.values():
         x.update(values)  
     return x
-
-
-min_1_value = count_few_values(min1_values)
 
 
 # +
@@ -169,7 +169,13 @@ def get_unique_values(all_values):
         return None
 
 
-min1_value_list = get_unique_values(min1_values)
+no_value = all_less_than_min_values(location=location,
+                                    min_rows=1)
+no_value_counts = count_few_values(no_value)
+no_value_list = get_unique_values(no_value)
+
+print(no_value_list)
+no_value_counts
 
 
 # +
