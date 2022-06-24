@@ -25,6 +25,7 @@ import os
 import time
 import math
 from collections import Counter
+from tqdm import tqdm
 
 #Location t
 location = "../../data/"
@@ -278,7 +279,7 @@ def delete_rows(df, indices):
 
 def save_file(df, location, filename):
     """This function saves a new csv file"""
-    df.to_csv(f"{location}processes/{filename}")
+    df.to_csv(f"{location}processed/{filename}")
     print(f'{"."*20}Saving file {filename} now{"."*20}')
 
 
@@ -303,7 +304,7 @@ def remove_values_from_all_file(location, columns_to_remove):
     # list of all the files
     files = all_files(location=location)
     # Obtaining each file in the list
-    for file in files:
+    for file in tqdm(files, desc="Retrieving files"):
         # open file
         df = get_df(location=location,
                     file_name=file)
@@ -311,7 +312,7 @@ def remove_values_from_all_file(location, columns_to_remove):
         # identifiers of the product)
         asin_list = list()
         # get each column to remove their values
-        for column in columns_to_remove:
+        for column in tqdm(columns_to_remove, desc="Removing columns"):
             # get all columns in the dataset
             all_columns = get_columns(df)
             # get not null rows of the column
@@ -341,3 +342,21 @@ def remove_values_from_all_file(location, columns_to_remove):
                   filename=file)
 
 
+columns_to_remove = ['Width:',
+                     'Item Display Length:', 
+                     'Total Diamond Weight:',
+                     'Gem Type:',
+                     'Style Name:',
+                     'Diameter:',
+                     'Size per Pearl:',
+                     'Primary Stone Gem Type:',
+                     'Capacity:',
+                     'Item Package Quantity:',
+                     'Metal Stamp:',
+                     'Format:',
+                     'Metal Type:',
+                     'Length:',
+                     'Model Number:',
+                     'Number of Items:']
+remove_values_from_all_file(location=location,
+                            columns_to_remove=columns_to_remove)
