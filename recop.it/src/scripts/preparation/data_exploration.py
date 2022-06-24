@@ -176,7 +176,14 @@ def count_few_values(few_values_dict):
     """Returns number of time few values columns appear in all the preprocessed files"""
     x = Counter()
     for values in few_values_dict.values():
-        x.update(values)  
+        # Checks if values of few_values_dict are lists
+        if isinstance(values, list):
+            # Update counter
+            x.update(values)
+        # Checks if values of few_values_dict are dicts
+        if isinstance(values, dict):
+            # Update counter
+            x.update(list(values.keys()))
     return x
 
 
