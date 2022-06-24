@@ -1,5 +1,5 @@
 outs:
-- md5: c3c1922976ffefb318b9471000a185fe.dir
-  size: 4413336689
-  nfiles: 20
+- md5: 56edc953967435c99db061a85ad7e413.dir
+  size: 2796431861
+  nfiles: 19
   path: processed
