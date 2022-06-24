@@ -125,19 +125,50 @@ def all_files(location):
 
 @runtime
 def all_less_than_min_values(location, min_rows, return_counts=False):
-    """This function returns a list of all fewer values than min_rows in each of the files"""
+    """
+    This function returns a list of all fewer values than min_rows (given 
+    the return_counts is set to False) in each of the files or a dictionary
+    containing the count of each of the columns fewer than the min_rows
+    
+    Paramater(s)
+    -------------
+    location      : str
+                    address to folder containing the files
+    min_rows      : int
+                    cut off value to find rows with values less than
+    return_counts : bool
+                    returns count of each of the values in a dict is True or
+                    a list of all columns less than min_rows
+    
+    Return(s)
+    ----------
+    all_few_value : dict(File_name:list(columns_less_than_min_rows))
+                    if return_counts = False
+                    dict(File_name:dict(columns_less_than_min_rows:count))
+                    if return_counts = True
+    """
     files = all_files(location=location)
     all_few_values = dict()
     for file in files:
-        df = get_df(location=location, file_name=file)
-        values = less_than_min_values(df, min_rows)
-        if return_counts is False:
-            all_few_values[file] = values
-        elif return_counts is True and min_rows > 1:
+        # get dataframes
+        df = get_df(location=location,
+                    file_name=file)
+        # get columns with less than min_rows
+        values = less_than_min_values(df=df,
+                                      min_rows=min_rows)
+        # Check if whether count is True and min_rows is greater than 1
+        # if min_rows in less than 1, then it is automatically 0
+        if return_counts is True and min_rows >= 1:
+            # Create dictionary for each file
             all_few_values[file] = dict()
             for index, value in zip(df[values].count().index,
                             df[values].count()):
                 all_few_values[file][index] = value
+        # if not return just the values
+        else:
+            # Add to all_few_values dict
+            all_few_values[file] = values
+        
     return all_few_values
 
 
