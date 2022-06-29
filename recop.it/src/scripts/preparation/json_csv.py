@@ -17,7 +17,7 @@
 # Loading necessary libraries
 # -
 
-import orjson
+import json
 from tqdm import tqdm
 import csv
 from prefect import task, Flow
@@ -37,7 +37,7 @@ LOCATION = "../../data/raw/Clothing_Shoes_and_Jewelry_5.json"
 @task
 def read_json(line):
     """This function reads a line of the json file as a dictionary"""
-    return orjson.loads(line)
+    return json.loads(line)
 
 
 @task
