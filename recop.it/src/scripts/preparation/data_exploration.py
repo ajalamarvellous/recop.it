@@ -1,44 +1,27 @@
-# ---
-# jupyter:
-#   jupytext:
-#     formats: notebooks//ipynb,scripts/preparation//py
-#     text_representation:
-#       extension: .py
-#       format_name: light
-#       format_version: '1.5'
-#       jupytext_version: 1.13.8
-#   kernelspec:
-#     display_name: Python 3
-#     language: python
-#     name: python3
-# ---
-
-# +
-# Loading necessary libraries
-# -
-
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
+import math
 import os
 import time
-import math
 from collections import Counter
+
+import pandas as pd
 from tqdm import tqdm
 
-#Location t
+# Location t
 location = "../../data/"
 
 
 def runtime(func):
     """Decorator function to return function runtime"""
+
     def wrapper(*args, **kwargs):
         """Decorator wrapper"""
         start_time = time.perf_counter()
         result = func(*args, **kwargs)
-        print(f"Runtime for {func.__name__} is: {time.perf_counter()-start_time:.6f}s")
+        print(
+            f"Runtime for {func.__name__} is: {time.perf_counter()-start_time:.6f}s"  # noqa
+        )  # noqa
         return result
+
     return wrapper
 
 
@@ -63,14 +46,14 @@ def first_5(location):
                     # Read top 5 lines
                     for i in range(5):
                         print(f.readline())
-                print("_"*100)
-            print("_"*100)
+                print("_" * 100)
+            print("_" * 100)
             print(f"{'-'*30} Opening another folder {'-'*30}")
 
 
 def get_df(location, file_name):
     """This function returns a dataframe"""
-    return pd.read_csv(location+"processed/"+file_name)
+    return pd.read_csv(location + "processed/" + file_name)
 
 
 df = get_df(location=location, file_name="FILE_1.csv")
@@ -79,24 +62,27 @@ df.head()
 
 df.describe(include="all")
 
-df.info()
-
 
 def get_columns(df):
     return list(df.columns)
 
 
 def split_columns(columns):
-    divs = math.ceil(len(columns)/3)
-    div1, div2, div3 = columns[:divs], columns[divs:divs*2], columns[divs*2:]
+    divs = math.ceil(len(columns) / 3)
+    div1, div2, div3 = (
+        columns[:divs],
+        columns[divs : divs * 2],  # noqa
+        columns[divs * 2 :],  # noqa
+    )  # noqa
     return div1, div2, div3
 
 
 def less_than_min_values(df, min_rows):
     """Returns function with less than the specified rows"""
     values = list()
-    for x,y in zip(df.count(), df.count().index):
-        if x < min_rows: values.append(y)
+    for x, y in zip(df.count(), df.count().index):
+        if x < min_rows:
+            values.append(y)
     return values
 
 
@@ -110,7 +96,7 @@ def not_null(columns):
         for x in columns:
             y = f"(df['{x}'].notnull())"
             final_list.append(y)
-        str_list =  " & ".join(final_list)
+        str_list = " & ".join(final_list)
         return f"df[{str_list}]"
     elif isinstance(columns, str):
         return f"df[df[{columns}].notnull()]"
@@ -126,10 +112,10 @@ def all_files(location):
 @runtime
 def all_less_than_min_values(location, min_rows, return_counts=False):
     """
-    This function returns a list of all fewer values than min_rows (given 
+    This function returns a list of all fewer values than min_rows (given
     the return_counts is set to False) in each of the files or a dictionary
     containing the count of each of the columns fewer than the min_rows
-    
+
     Paramater(s)
     -------------
     location      : str
@@ -139,7 +125,7 @@ def all_less_than_min_values(location, min_rows, return_counts=False):
     return_counts : bool
                     returns count of each of the values in a dict is True or
                     a list of all columns less than min_rows
-    
+
     Return(s)
     ----------
     all_few_value : dict(File_name:list(columns_less_than_min_rows))
@@ -151,29 +137,28 @@ def all_less_than_min_values(location, min_rows, return_counts=False):
     all_few_values = dict()
     for file in files:
         # get dataframes
-        df = get_df(location=location,
-                    file_name=file)
+        df = get_df(location=location, file_name=file)
         # get columns with less than min_rows
-        values = less_than_min_values(df=df,
-                                      min_rows=min_rows)
+        values = less_than_min_values(df=df, min_rows=min_rows)
         # Check if whether count is True and min_rows is greater than 1
         # if min_rows in less than 1, then it is automatically 0
         if return_counts is True and min_rows >= 1:
             # Create dictionary for each file
             all_few_values[file] = dict()
-            for index, value in zip(df[values].count().index,
-                            df[values].count()):
+            for index, value in zip(
+                df[values].count().index, df[values].count()
+            ):  # noqa
                 all_few_values[file][index] = value
         # if not return just the values
         else:
             # Add to all_few_values dict
             all_few_values[file] = values
-        
+
     return all_few_values
 
 
 def count_few_values(few_values_dict):
-    """Returns number of time few values columns appear in all the preprocessed files"""
+    """Returns number of time few values columns appear in all the preprocessed files"""  # noqa
     x = Counter()
     for values in few_values_dict.values():
         # Checks if values of few_values_dict are lists
@@ -191,6 +176,7 @@ def count_few_values(few_values_dict):
 # min_1_value
 # -
 
+
 def get_unique_values(all_values):
     """
     Returns unique values in the all_values given on the assumption that
@@ -207,18 +193,39 @@ def get_unique_values(all_values):
         return None
 
 
-no_value = all_less_than_min_values(location=location,
-                                    min_rows=1)
-no_value_counts = count_few_values(no_value)
-no_value_list = get_unique_values(no_value)
+no_value = all_less_than_min_values(location=location, min_rows=1)
 
-print(no_value_list)
-no_value_counts
+for file in no_value:
+    print(file)
+    print("-" * 50)
+    print(no_value[file])
+
+count_zeros = count_few_values(no_value)
+
+count_few_values(no_value)
+
+max_1k = all_less_than_min_values(
+    location=location, min_rows=1000, return_counts=True
+)  # noqa
+
+for file in max_1k:
+    print(file)
+    print("-" * 50)
+    print(max_1k[file])
+
+unique_1k = get_unique_values(max_1k)
+
+unique_1k
+
+df_5 = get_df(location, "FILE_13.csv")
+
+df_5[df_5["Flavor Name:"].notnull()]["reviewText"].values
 
 
 # +
 # min1_value_list
 # -
+
 
 def remove_columns(columns, col_2_remove):
     """Remove values in col_2_remove from columns"""
@@ -249,11 +256,11 @@ def view_file(df, columns_to_view, columns_to_search):
         for x in columns_to_search:
             columns_to_view.append(x)
             print(df[df[x].notnull()][columns_to_view].head(15))
-            print("_"*30)
+            print("_" * 30)
             columns_to_view.remove(x)
     else:
         columns_to_view.append(columns_to_search)
-        df  = df[df[columns_to_search].notnull()][columns_to_view]
+        df = df[df[columns_to_search].notnull()][columns_to_view]
         columns_to_view.remove(columns_to_search)
     return df
 
@@ -268,12 +275,12 @@ columns_to_search = columns[9:]
 # -
 
 columns_to_view = columns[3:9]
-diameter_df = view_file(df, columns_to_view, "Diameter:")
+diameter_df = view_file(df, columns_to_view, "Flavor:")
 
 
 def get_values(df, column, n_iters=0):
     """
-    Print n_iters rows of the specied column if n_iters is provided else 
+    Print n_iters rows of the specied column if n_iters is provided else
     return all values in the specied column instead
     """
     if n_iters != 0:
@@ -295,13 +302,14 @@ size = get_values(sizename_df, "Size Name:")
 
 sizename_df["Size Name:"].value_counts()
 
-modelnumb_df = view_file(df, columns_to_view, 'Model Number:')
-print(modelnumb_df["Model Number:"].value_counts())
+modelnumb_df = view_file(df, columns_to_view, "Flavor:")
+print(modelnumb_df["Flavor:"].value_counts())
 # view_n_column(modelnumb_df, "reviewText", 15)
+
 
 def get_indices(df, column, values):
     """
-    Return indices of all rows that the column value matches those in 
+    Return indices of all rows that the column value matches those in
     values in the dataset
     """
     indices_list = list()
@@ -332,27 +340,26 @@ def remove_values_from_all_file(location, columns_to_remove):
     """
     This function removes values we don't want from the entire dataset i.e
     all files in the processed folder and saves them back
-    
+
     Parameter(s)
     --------------
     location : str
                location to the data folder
     columns_to_remove : list
                         list of columns to purge their values
-                        
+
     Return(s)
     -----------
     None
     """
-    
+
     # list of all the files
     files = all_files(location=location)
     # Obtaining each file in the list
     for file in tqdm(files, desc="Retrieving files"):
         # open file
-        df = get_df(location=location,
-                    file_name=file)
-        # asin list to store all 'asin' values ('asin' values are unique 
+        df = get_df(location=location, file_name=file)
+        # asin list to store all 'asin' values ('asin' values are unique
         # identifiers of the product)
         asin_list = list()
         # get each column to remove their values
@@ -360,47 +367,37 @@ def remove_values_from_all_file(location, columns_to_remove):
             # get all columns in the dataset
             all_columns = get_columns(df)
             # get not null rows of the column
-            notnull_values = view_file(df=df,
-                                       columns_to_view=all_columns[3:9],
-                                       columns_to_search=column)
+            notnull_values = view_file(
+                df=df,
+                columns_to_view=all_columns[3:9],
+                columns_to_search=column,  # noqa
+            )
             # get 'asin' values of the notnull values
-            notnull_asin_values = get_values(df=notnull_values,
-                                             column="asin")
+            notnull_asin_values = get_values(df=notnull_values, column="asin")
             # add to not null 'asin' values to asin_list
             asin_list.extend(notnull_asin_values)
             # drop column
-            drop_column(df=df,
-                        column=column)
+            drop_column(df=df, column=column)
         # get unique "asin" values
         unique_asin_values = get_unique_values(asin_list)
         # get indices of asin values
-        indices = get_indices(df=df,
-                              column="asin",
-                              values=unique_asin_values)
+        indices = get_indices(df=df, column="asin", values=unique_asin_values)
         # delete rows matching the indices
-        delete_rows(df=df,
-                    indices=indices)
+        delete_rows(df=df, indices=indices)
         # resave file
-        save_file(df=df,
-                  location=location,
-                  filename=file)
+        save_file(df=df, location=location, filename=file)
 
 
-columns_to_remove = ['Width:',
-                     'Item Display Length:', 
-                     'Total Diamond Weight:',
-                     'Gem Type:',
-                     'Style Name:',
-                     'Diameter:',
-                     'Size per Pearl:',
-                     'Primary Stone Gem Type:',
-                     'Capacity:',
-                     'Item Package Quantity:',
-                     'Metal Stamp:',
-                     'Format:',
-                     'Metal Type:',
-                     'Length:',
-                     'Model Number:',
-                     'Number of Items:']
-remove_values_from_all_file(location=location,
-                            columns_to_remove=columns_to_remove)
+columns_to_remove = [
+    "Grip Type:",
+    "Initial:",
+    "Shape:",
+    "Package Quantity:",
+    "Flavor Name:",
+    "Edition:",
+    "Scent Name:",
+    "Flavor:",
+]
+remove_values_from_all_file(
+    location=location, columns_to_remove=columns_to_remove
+)  # noqa
