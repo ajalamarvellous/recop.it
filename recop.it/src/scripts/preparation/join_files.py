@@ -21,3 +21,8 @@ def read_csv(address):
 def stack_df(df1, df2):
     """Stacks two dataframes on top of each other, vertically"""
     return pd.concat([df1, df2])
+
+
+def drop_cols(df, columns):
+    """Drops columns from the dataframe"""
+    return df.drop(columns, axis=1, inplace=True)
