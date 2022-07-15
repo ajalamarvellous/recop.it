@@ -26,3 +26,9 @@ def stack_df(df1, df2):
 def drop_cols(df, columns):
     """Drops columns from the dataframe"""
     return df.drop(columns, axis=1, inplace=True)
+
+
+def save_file(df, name):
+    """Saves the file with the given name"""
+    address = home.joinpath("data", "processed", name)
+    df.to_csv(address)
