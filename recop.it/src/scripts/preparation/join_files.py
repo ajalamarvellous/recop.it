@@ -1,9 +1,17 @@
+import logging
 import types
 from pathlib import Path
 
 import pandas as pd
 
 home = Path.cwd().parents[2]
+
+logging.basicConfig(
+    format="%(asctime)s [%(levelname)s]\
+            %(funcName): %(message)s",
+    levelname=logging.DEBUG,
+)
+logger = logging.getLogger(__name__)
 
 
 def get_files(home: str) -> types.GeneratorType[str]:
