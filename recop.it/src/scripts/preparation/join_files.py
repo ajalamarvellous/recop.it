@@ -1,6 +1,8 @@
 import types
 from pathlib import Path
 
+import pandas as pd
+
 home = Path.cwd().parents[2]
 
 
@@ -9,3 +11,8 @@ def get_files(home: str) -> types.GeneratorType[str]:
     assert home.exists()
     files = home.joinpath("data", "processed").iterdir()
     return files
+
+
+def read_csv(address):
+    """Returns a dataframe from the CSV file read"""
+    return pd.read_csv(address)
