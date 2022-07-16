@@ -1,3 +1,4 @@
+import os
 import sys
 from pathlib import Path
 
@@ -59,5 +60,8 @@ def test_drop_cols(df):
     assert df.shape[0] == x
 
 
-def test_save_file():
-    pass
+def test_save_file(df, location):
+    filename = Path(location, "sample.csv")
+    join_files.save_file(df, filename.name)
+    assert filename.exists()
+    os.remove(filename)
