@@ -19,8 +19,18 @@ def test_get_files(location):
     assert Path(next(files)).exists()
 
 
-def test_read_csv():
-    pass
+@pytest.fixture
+def address(location):
+    address = next(join_files.get_files(location)).__str__()
+    return address
+
+
+def test_read_csv(address):
+    df = join_files.read_csv(address)
+    assert isinstance(df.shape, tuple)
+    assert df.shape[0] > 1
+    assert df.shape[1] > 1
+    assert df.size == df.shape[0] * df.shape[1]
 
 
 def test_stack_df():
