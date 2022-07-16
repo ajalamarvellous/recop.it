@@ -51,8 +51,12 @@ def test_stack_df(df):
     assert stacked_df.shape[1] == df.shape[1]
 
 
-def test_drop_cols():
-    pass
+def test_drop_cols(df):
+    x, y = df.shape
+    join_files.drop_cols(df, "b")
+    assert "b" not in df.columns.values
+    assert df.shape[1] == y - 1
+    assert df.shape[0] == x
 
 
 def test_save_file():
