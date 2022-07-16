@@ -3,17 +3,20 @@ from pathlib import Path
 
 import pytest
 
-sys.insert(0, Path(__file__).parents[1].joinpath("preparation"))
-import join_files  # noqa
+sys.path.insert(
+    0, Path(__file__).resolve().parents[1].joinpath("preparation").__str__()
+)
+import join_files  # noqaa
 
 
 @pytest.fixture
 def location():
-    return Path.cwd().parents[2].joinpath("data", "processed")
+    return Path(__file__).resolve().parents[3].joinpath("data", "processed")
 
 
 def test_get_files(location):
-    pass
+    files = join_files.get_files(location)
+    assert Path(next(files)).exists()
 
 
 def test_read_csv():
